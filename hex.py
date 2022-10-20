@@ -1,21 +1,38 @@
 import binascii
+import base64
+from multiprocessing.sharedctypes import Value
 import re
+import json
+import os.path
 
-FILE = "sample.jpg"
-
-expression = "(?P<id>\w+?)_INIT\s*?=.*?'h(?P<hexValue>[0-9a-fA-F]*)"
-regex = re.compile(expression)
+FILE = "sample.png"
 
 
 def get_hex(file):
+    """Get the hex value of the file"""
     with open(file, "rb") as f:
-        hexdata = binascii.hexlify(f.read(3))
+        hexdata = base64.b16encode(f.read(32)).decode("utf-8")
+        fileType = os.path.splitext(FILE)
+        print(hexdata)
+        check_data(hexdata, fileType[1])
 
-        if hexdata != b"ffd8ff":
-            print("corrupted image")
-        else:
-            print("not corrupted")
-    # print(f" hexcode = {hexdata}")
+
+def check_data(hex, fileType):
+    """check the hex value from the json if its corrupted"""
+    f = open("hex.json")
+    data = json.load(f)
+
+    for types in data:
+        for key, value in types.items():
+            if key == fileType:
+                if re.search(f"{value}.+", hex):
+                    hexCode = hex
+                    if hexCode == hex:
+                        print("not corrupted")
+                else:
+                    print("corrupt image")
+
+    f.close()
 
 
 def main():
