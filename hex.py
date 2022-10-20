@@ -5,7 +5,7 @@ import re
 import json
 import os.path
 
-FILE = "sample.png"
+FILE = "sample.PNG"
 
 
 def get_hex(file):
@@ -13,8 +13,7 @@ def get_hex(file):
     with open(file, "rb") as f:
         hexdata = base64.b16encode(f.read(32)).decode("utf-8")
         fileType = os.path.splitext(FILE)
-        print(hexdata)
-        check_data(hexdata, fileType[1])
+        check_data(hexdata, fileType[1].lower())
 
 
 def check_data(hex, fileType):
