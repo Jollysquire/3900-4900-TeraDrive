@@ -1,42 +1,46 @@
-import binascii
 import base64
-from multiprocessing.sharedctypes import Value
 import re
 import json
 import os.path
 
-FILE = "sample.PNG"
+# FILE = "sample.PNG"
 
 
-def get_hex(file):
-    """Get the hex value of the file"""
-    with open(file, "rb") as f:
-        hexdata = base64.b16encode(f.read(32)).decode("utf-8")
-        fileType = os.path.splitext(FILE)
-        check_data(hexdata, fileType[1].lower())
+class CheckFile:
+    """ "
+    The class has 2 function
+        - generate a hex for the file
+        - check the hex if it matches the file signature
 
+    If the hex doesn't match the file signature it will return corrupt
 
-def check_data(hex, fileType):
-    """check the hex value from the json if its corrupted"""
-    f = open("hex.json")
-    data = json.load(f)
+    """
 
-    for types in data:
-        for key, value in types.items():
-            if key == fileType:
-                if re.search(f"{value}.+", hex):
-                    hexCode = hex
-                    if hexCode == hex:
-                        print("not corrupted")
-                else:
-                    print("corrupt image")
+    def __init__(self):
+        """only initialize the class"""
+        pass
 
-    f.close()
+    def get_hex(self, file):
+        """Get the hex value of the file"""
+        with open(file, "rb") as f:
+            hexdata = base64.b16encode(f.read(32)).decode("utf-8")
+            fileType = os.path.splitext(file)
 
+        return hexdata, fileType[1].lower()
 
-def main():
-    get_hex(FILE)
+    def check_data(self, hex, fileType):
+        """check the hex value from the json if its corrupted"""
+        f = open("hex.json")
+        data = json.load(f)
 
+        for types in data:
+            for key, value in types.items():
+                if key == fileType:
+                    if re.search(f"{value}.+", hex):
+                        hexCode = hex
+                        if hexCode == hex:
+                            return "notCorrupted"
+                    else:
+                        return "corrupted"
 
-if __name__ == "__main__":
-    main()
+        f.close()
