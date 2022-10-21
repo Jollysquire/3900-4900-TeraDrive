@@ -1,235 +1,163 @@
-import argparse
-import datetime
+from pathlib import Path, PurePath
 import os
-from pathlib import Path
+from re import S
+import sys
+import datetime
+from os.path import getsize
 import logging
-import re
 
-# Mostly variables to feed into template.html
-appName     = "Clone2HTML"
-app_ver     = "1.0"
-gen_date    = datetime.datetime.now().strftime("%m/%d/%Y")
-gen_time    = datetime.datetime.now().strftime("%H:%M")
-app_link    = "https://github.com/Jollysquire/3900-4900-TeraDrive"
-dir_data    = ""
-total_numFiles  = 0 
-total_numDirs   = 0 
-grand_total_size= 0
-file_links      = "false"
-link_protocol   = "file://"
-include_hidden  = False
-dir_results     = []
-childList_names = [] # names supplied from --child parameters
-startsList_names = [] # dir's generated from --startsfrom parameters
-# linkRoot = "/"  # [LINK ROOT] is fixed as '' (see generateHTML)
+# global variables definition
+AppName = "renameMe"
+GenDate = datetime.datetime.now().strftime("%d/%m/%Y")
+GenTime = datetime.datetime.now().strftime("%H:%M")
+AppLink = "https://github.com/Jollysquire/3900-4900-TeraDrive"
+DirData = ""
+NumFiles = 0
+NumDirs = 0
+GrandTotalSize = 0
+LinkFiles = "false"  # set to "true" to generate links to files
 
-parser = argparse.ArgumentParser(description='Generate HTML view of the file system.\n')
-parser.add_argument('pathToIndex', help='Path of Directory to Index')
-parser.add_argument('outputfile', help='Name of report file (without .html)')
-parser.add_argument('--child', action='append', help='Exact name(s) of children directories to include')
-parser.add_argument('--startswith', action='append', help='Start of name(s) of children dirs to include')
-parser.add_argument('--hidden', help='Include hidden files (leading with .)', action="store_true")
-parser.add_argument('--links', help='Create links to files in HTML output', action="store_true")
-parser.add_argument('-v', '--verbose', help='increase output verbosity. -v or -vv for more.', action="count")
-parser.add_argument('--version', help='Print version and exit', action="version", version=app_ver)
+
+
+# functions definition
+def DirToArray(ScanDir):
+    global DirData
+    global NumFiles
+    global NumDirs
+    global GrandTotalSize
+    # assing a number identifier to each directory
+    i = 1
+    dirIDsDictionary = {}
+    dirIDsDictionary[ScanDir] = 0
+    for currentDir, dirs, files in os.walk(ScanDir):
+        for dir in dirs:
+            pathDir = os.path.join(currentDir, dir)
+
+            dirIDsDictionary[pathDir] = i  # HERE
+
+            i = i + 1
+
+    # initilize array to hold all dir data, dimensioning it to hold the total number of dirs
+    fullDirArr = []
+    for p in range(i):
+        fullDirArr.append(p)
+
+    # traverse the directory tree
+    for currentDir, dirs, files in os.walk(ScanDir):
+        currentDirId = dirIDsDictionary[currentDir]
+
+        currentDirArray = []  # array to hold all current dir data
+        currentDirModifiedTime = datetime.datetime.fromtimestamp(
+            os.path.getmtime(currentDir)
+        )
+        currentDirModifiedTime = currentDirModifiedTime.strftime("%d/%m/%Y %H:%M:%S")
+        currentDirFixed = currentDir.replace(
+            "\\", "\\\\"
+        )  # replace / with \\ in the dir path (necessary for javascript functions to work properly
+        currentDirArray.append(
+            currentDirFixed + "*0*" + currentDirModifiedTime
+        )  # append directory info to currentDirArray
+        totalSize = 0
+        for file in files:
+            NumFiles = NumFiles + 1
+            fileSize = getsize(currentDir + "/" + file)
+            totalSize = totalSize + fileSize
+            GrandTotalSize = GrandTotalSize + fileSize
+            fileModifiedTime = datetime.datetime.fromtimestamp(
+                os.path.getmtime(currentDir + "/" + file)
+            )
+            fileModifiedTime = fileModifiedTime.strftime("%d/%m/%Y %H:%M:%S")
+            currentDirArray.append(
+                file + "*" + str(fileSize) + "*" + fileModifiedTime
+            )  # append file info to currentDirArray
+        currentDirArray.append(totalSize)  # append total file size to currentDirArray
+        # create the list of directory IDs correspondent to the subdirs present on the current directory
+        # this acts as a list of links to the subdirectories on the javascript code
+        dirLinks = ""
+        for dir in dirs:
+            NumDirs = NumDirs + 1
+            pathChild = os.path.join(currentDir, dir)
+            dirLinks = dirLinks + str(dirIDsDictionary[pathChild]) + "*"
+        dirLinks = dirLinks[:-1]  # remove last *
+        currentDirArray.append(dirLinks)
+        fullDirArr[
+            currentDirId
+        ] = currentDirArray  # store currentDirArray on the correspondent position of fullDIrArr
+
+    list_data = []
+    for d in range(len(fullDirArr)):
+        list_data.append("dirs[" + str(d) + "] = [\n")
+        for g in range(len(fullDirArr[d])):
+            if type(fullDirArr[d][g]) == int:
+                list_data.append(str(fullDirArr[d][g]) + ",\n")
+            else:
+                list_data.append('"' + fullDirArr[d][g] + '",\n')
+        list_data.append("];\n")
+        list_data.append("\n")
+    DirData += "".join(list_data)
+
+    return
+
+
+def make_HTML(
+    DirData,
+    AppName,
+    GenDate,
+    GenTime,
+    title,
+    AppLink,
+    NumFiles,
+    NumDirs,
+    GrandTotalSize,
+    LinkFiles,
+):
+    templateFile = open((Path(__file__).parent / 'template.html'), 'r')
+    outputFile = open(f'{title}.html', 'w', encoding="utf-8")
+    for line in templateFile:
+        modifiedLine = line
+        modifiedLine = modifiedLine.replace("[DIR DATA]", DirData)
+        modifiedLine = modifiedLine.replace("[APP NAME]", AppName)
+        modifiedLine = modifiedLine.replace("[GEN DATE]", GenDate)
+        modifiedLine = modifiedLine.replace("[GEN TIME]", GenTime)
+        modifiedLine = modifiedLine.replace("[TITLE]", title)
+        modifiedLine = modifiedLine.replace("[APP LINK]", AppLink)
+        modifiedLine = modifiedLine.replace("[NUM FILES]", str(NumFiles))
+        modifiedLine = modifiedLine.replace("[NUM DIRS]", str(NumDirs))
+        modifiedLine = modifiedLine.replace("[TOT SIZE]", str(GrandTotalSize))
+        modifiedLine = modifiedLine.replace("[LINK FILES]", LinkFiles)
+        outputFile.write(modifiedLine)
+    templateFile.close()
+    outputFile.close()
+    logging.warning("Wrote output to: " + os.path.realpath(outputFile.name))
+    return
+
 
 def main():
-    global include_hidden, file_links, childList_names, startsList_names
-    args = parser.parse_args()
-    
-    ## Initialize logging facilities
-    log_level = logging.WARNING
-    if args.verbose:
-        if args.verbose > 1:
-            log_level = logging.DEBUG
-        elif args.verbose == 1:
-            log_level = logging.INFO
-    logging.basicConfig(format='%(asctime)s %(message)s', datefmt='%H:%M:%S', level=log_level)
-    log_name = logging.getLevelName(logging.getLogger().getEffectiveLevel())
-    logging.info( f'Logging Level {log_name}')
-    
-    # Handle user input flags and options
-    pathToIndex = args.pathToIndex
-    title = args.outputfile
-    if args.links:
-        file_links = "true"
-    if args.hidden:
-        include_hidden = True
-    if not os.path.exists(pathToIndex):
-        logging.error(f"Directory specified to index [{pathToIndex}] doesn't exist. Aborting.")
-        exit(1)
-    if os.path.isdir(title):
-        logging.error(f"Chosen output file [{title}] is a directory. Aborting.")
-        exit(1)
-
-    logging.info(f"Creating file links is [{file_links}]")
-    logging.info(f"Showing hidden items is [{include_hidden}]")
-        
-    # check that no child or startswith arg include a path separator
-    for child_val in args.child or []:
-        if os.sep in child_val:
-            logging.error(f"child argument [{child_val}] contains a path separator.")
-            exit(1)
-        childList_names.append(os.path.normcase(child_val))
-    for start_val in args.startswith or []:
-        if os.sep in start_val:
-            logging.error(f"startswith argument [{start_val}] contains a path separator.")
-            exit(1)
-        startsList_names.append(os.path.normcase(start_val))
-
-    # Time to do the real work. Generate array with our file & dir entries,
-    # then generate the resulting HTML
-    pathToIndex = Path(pathToIndex).resolve()
-    logging.warning(f'Root index directory: [{pathToIndex}]')
-    generateDirArray(pathToIndex)
-    logging.info('Outputting HTML...')
-    generateHTML(
-        dir_data, appName, app_ver, gen_date, gen_time, title, app_link,
-        total_numFiles, total_numDirs, grand_total_size, file_links
+    if len(sys.argv) < 3:  # check if required arguments are supplied
+        print("Missing arguments. This tool should be used as follows:")
+        print("    renameMe pathToIndex outputFileName")
+    else:
+        pathToIndex = str(sys.argv[1])
+        if os.path.exists(pathToIndex):  # check if the specified directory exists
+            DirToArray(pathToIndex)
+            make_HTML(
+            DirData,
+            AppName,
+            GenDate,
+            GenTime,
+            sys.argv[1],
+            AppLink,
+            NumFiles,
+            NumDirs,
+            GrandTotalSize,
+            LinkFiles,
         )
-    return
+        else:
+            print("The specified directory does not exist.")
+       
         
-def generateDirArray(root_dir): # root i.e. user-provided root path, not "/"
-    global dir_data, total_numFiles, total_numDirs, grand_total_size, \
-            dir_results, childList_names, startsList_names
-    id = 0
-    dirs_dictionary = {}
-    
-    # We enumerate every unique directory, ignoring symlinks.
-    first_iteration = True
-    for current_dir, dirs, files in os.walk(root_dir):
-        logging.debug( f'Walking Dir [{current_dir}]')
-        
-        # If --child or --startswith are used, only add the requested
-        # directories. This will only be performed on the root_dir
-        if first_iteration:
-            first_iteration = False
-            if childList_names or startsList_names:
-                selectDirs(current_dir, dirs, include_hidden)
-                files = []
 
-        if include_hidden is False:
-            dirs[:] = [d for d in dirs if not d[0] == '.']
-            files = [f for f in files if not f[0] == '.']
 
-        dirs = sorted(dirs, key=str.casefold)
-        files = sorted(files, key=str.casefold)
 
-        # The value list in the dictionary are indexed as follows.
-        # |  0 |      1     |         2           |    3     |
-        # | id | file_attrs | dir total file size | sub dirs |
-        # [1] leads with the current directory path and modification time, and 
-        # is followed by the directory's files and their attributes.
-        # Id is unused but could be useful for future features.
-        dirs_dictionary[current_dir] = [id, [], 0, '']
-        arr = dirs_dictionary[current_dir][1]
-        dir_mod_time = int(
-                datetime.datetime.fromtimestamp(
-                        os.path.getmtime(current_dir)).timestamp())
-        arr.append(f'{current_dir}*0*{dir_mod_time}')
-
-        ##### Enumerate FILES #####
-        total_size = 0
-        for file in files:
-            full_file_path = os.path.join(current_dir, file)
-            if os.path.isfile(full_file_path):
-                total_numFiles   += 1
-                file_size         = os.path.getsize(full_file_path)
-                total_size       += file_size
-                grand_total_size += file_size
-                try:  # Avoid possible invalid mtimes
-                    mod_time = int(datetime.datetime.fromtimestamp
-                        (os.path.getmtime(full_file_path)).timestamp())
-                except:
-                    logging.warning(f'----fromtimestamp error [{full_file_path}]')
-                    mod_time = 1
-                arr.append(f'{file}*{file_size}*{mod_time}')
-        dirs_dictionary[current_dir][2] = total_size
-
-        ##### Enumerate DIRS #####
-        dir_links = ''
-        for dir in dirs:
-            full_dir_path = os.path.join(current_dir, dir)
-            if os.path.isdir(full_dir_path) and not os.path.islink(full_dir_path):
-                id += 1
-                total_numDirs += 1
-                dirs_dictionary[full_dir_path] = (id, [], '')
-                dir_links += f'{id}*'
-        dirs_dictionary[current_dir][3] = dir_links[:-1]
-
-    ## Output format follows:
-    #  "FILE_PATH*0*MODIFIED_TIME","FILE_NAME*FILE_SIZE*MODIFIED_TIME",DIR_SIZE,"DIR1*DIR2..."
-    for entry in dirs_dictionary:
-        logging.debug(f'entry in dirs_dictionary [{str(entry)}]')
-        dir_data = f'D.p(['
-        try:
-            for data in dirs_dictionary[entry][1]:
-                dir_data += f'"{data}",'
-            dir_data += f'{dirs_dictionary[entry][2]},"{dirs_dictionary[entry][3]}"])\n'
-            dir_results.append(dir_data)
-        except:
-            logging.error( f'----loading from dirs_dictionary error. Could not add [{entry}]')
-    return
-
-# This function will execute only on the first iteration of the directory walk.
-# It only has an effect if --child or --startswith are used.
-def selectDirs(current_dir, dirs, include_hidden):
-    if childList_names:
-        logging.warning(f'Using dirs Named [{str(childList_names)[1:-1]}]')
-    hidden_dirs = []
-    if startsList_names:
-        logging.warning(f'Using dirs starting with [{str(startsList_names)[1:-1]}]')
-        if include_hidden:
-            hidden_dirs = ["."+d for d in startsList_names]
-            logging.warning(f'Hidden flag set. Using dirs starting with [{str(hidden_dirs)[1:-1]}]')
-    
-    desired_dirs = startsList_names + hidden_dirs
-    for i in range(len(dirs) -1, -1, -1):
-        keep_dir = '?'
-        for desired in desired_dirs:
-            if re.match(desired, dirs[i], re.I) or dirs[i] in childList_names:
-                keep_dir = 'Y'
-        if keep_dir != 'Y':
-            logging.debug('..Unselecting: %s', dirs[i])
-            del dirs[i]
-    logging.info(f'Dirs selected:\n{dirs}')
-    return
-
-def generateHTML(
-    dir_data, appName, app_ver, gen_date, gen_time, title,
-    app_link, numFiles, numDirs, grand_total_size, file_links
-    ):
-    template_file = open((Path(__file__).parent / 'template.html'), 'r')
-    output_file = open(f'{title}.html', 'w', encoding="utf-8")
-    for line in template_file:
-        modified_line = line
-        if '[DIR DATA]' in modified_line:
-            # New lines in file names will break the output.
-            for line in dir_results:
-                sane_format = line.replace('\r', '')
-                try:  # can error if encoding mismatch; can't fix, just report
-                    output_file.write(f'{sane_format}')
-                except:
-                    logging.warning(f'----output_file.write error [{sane_format}]')
-            continue
-        modified_line = modified_line.replace('[APP NAME]', appName)
-        modified_line = modified_line.replace('[APP VER]', app_ver)
-        modified_line = modified_line.replace('[GEN DATE]', gen_date)
-        modified_line = modified_line.replace('[GEN TIME]', gen_time)
-        modified_line = modified_line.replace('[TITLE]', title)
-        modified_line = modified_line.replace('[APP LINK]', app_link)
-        modified_line = modified_line.replace('[NUM FILES]', str(numFiles))
-        modified_line = modified_line.replace('[NUM DIRS]', str(numDirs))
-        modified_line = modified_line.replace('[TOT SIZE]', str(grand_total_size))
-        modified_line = modified_line.replace('[LINK FILES]', file_links)
-        modified_line = modified_line.replace('[LINK PROTOCOL]', link_protocol)
-        modified_line = modified_line.replace('[SOURCE ROOT]', '')
-        modified_line = modified_line.replace('[LINK ROOT]', '')
-        output_file.write(modified_line)
-    template_file.close()
-    output_file.close()
-    logging.warning("Wrote output to: " + os.path.realpath(output_file.name))
-    return
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
