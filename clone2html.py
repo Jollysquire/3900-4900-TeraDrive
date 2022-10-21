@@ -1,9 +1,10 @@
-from importlib.resources import path
+from pathlib import Path, PurePath
 import os
 from re import S
 import sys
 import datetime
 from os.path import getsize
+import logging
 
 # global variables definition
 AppName = "renameMe"
@@ -15,6 +16,7 @@ NumFiles = 0
 NumDirs = 0
 GrandTotalSize = 0
 LinkFiles = "false"  # set to "true" to generate links to files
+
 
 
 # functions definition
@@ -43,6 +45,7 @@ def DirToArray(ScanDir):
     # traverse the directory tree
     for currentDir, dirs, files in os.walk(ScanDir):
         currentDirId = dirIDsDictionary[currentDir]
+
         currentDirArray = []  # array to hold all current dir data
         currentDirModifiedTime = datetime.datetime.fromtimestamp(
             os.path.getmtime(currentDir)
@@ -108,8 +111,8 @@ def make_HTML(
     GrandTotalSize,
     LinkFiles,
 ):
-    templateFile = open("template.html", "r")
-    outputFile = open(title + ".html", "w")
+    templateFile = open((Path(__file__).parent / 'template.html'), 'r')
+    outputFile = open(f'{title}.html', 'w', encoding="utf-8")
     for line in templateFile:
         modifiedLine = line
         modifiedLine = modifiedLine.replace("[DIR DATA]", DirData)
@@ -125,6 +128,8 @@ def make_HTML(
         outputFile.write(modifiedLine)
     templateFile.close()
     outputFile.close()
+    logging.warning("Wrote output to: " + os.path.realpath(outputFile.name))
+    return
 
 
 def main():
@@ -133,23 +138,25 @@ def main():
         print("    renameMe pathToIndex outputFileName")
     else:
         pathToIndex = str(sys.argv[1])
-        title = str(sys.argv[2])
         if os.path.exists(pathToIndex):  # check if the specified directory exists
             DirToArray(pathToIndex)
             make_HTML(
-                DirData,
-                AppName,
-                GenDate,
-                GenTime,
-                title,
-                AppLink,
-                NumFiles,
-                NumDirs,
-                GrandTotalSize,
-                LinkFiles,
-            )
+            DirData,
+            AppName,
+            GenDate,
+            GenTime,
+            sys.argv[1],
+            AppLink,
+            NumFiles,
+            NumDirs,
+            GrandTotalSize,
+            LinkFiles,
+        )
         else:
-            print("The specified directory doesn't exist")
+            print("The specified directory does not exist.")
+       
+        
+
 
 
 if __name__ == "__main__":
