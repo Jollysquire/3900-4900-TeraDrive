@@ -374,6 +374,14 @@
 			display: inline-block;
 		}
 
+		.greydot {
+			height: 10px;
+			width: 10px;
+			background-color: rgb(104, 103, 103);
+			border-radius: 50%;
+			display: inline-block;
+		}
+
 		/* --- Listview footer --- */
 
 		.list_footer {
@@ -1363,10 +1371,13 @@
 					// STATUS VARIABLE FOR EACH FILE WOULD GO HERE
 					// status = "<span class='greendot'></span>"
 					// status = "<span class='reddot'></span>"
+					// status = "<span class='greudot'></span>"
 
 					// if function returns corrupted, use reddot class
 					// if function returns not corrupted, use greendot class
-					var status = "<span class='greendot'></span>"
+					// if function returns None or not scanned, use greydot class
+
+					var status = "<span class='greydot'></span>"
 					table_html += 
 						"<tr>" + 
 							"<td><span class='file'>" + file_tmp + "</span></td>" + 
