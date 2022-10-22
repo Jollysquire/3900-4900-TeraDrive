@@ -356,6 +356,24 @@
 			border-color: transparent transparent transparent #222;
 		}
 
+		/* --- Status bar --- */
+
+		.greendot {
+			height: 10px;
+			width: 10px;
+			background-color: green;
+			border-radius: 50%;
+			display: inline-block;
+		}
+
+		.reddot {
+			height: 10px;
+			width: 10px;
+			background-color: rgb(255, 0, 0);
+			border-radius: 50%;
+			display: inline-block;
+		}
+
 		/* --- Listview footer --- */
 
 		.list_footer {
@@ -1290,8 +1308,8 @@
 						var dirSize = getDirTreeSize( subdirs[c] );
 						subdirTotSizes += dirSize;
 						var timestamp = timestampToDate(sTmp[2]);
-						// STATUS VARIABLE FOR EACH FILE WOULD GO HERE
-						var status = "corrupted/not corrupted"
+						// STATUS VARIABLE FOR EACH FOLDER WOULD GO HERE (technically nothing)
+						var status = ""
 						table_html += 
 							"<tr>" + 
 								"<td><span class='file_folder'><a href=\"#\" class=\"folder_link\" id=\"" + subdirs[c] + "\"> " + name + "</a></span></td>" + 
@@ -1342,12 +1360,18 @@
 					}
 					
 					var timestamp = timestampToDate(sTmp[2]);
+					// STATUS VARIABLE FOR EACH FILE WOULD GO HERE
+					// status = "<span class='greendot'></span>"
+					// status = "<span class='reddot'></span>"
 
+					// if function returns corrupted, use reddot class
+					// if function returns not corrupted, use greendot class
+					var status = "<span class='greendot'></span>"
 					table_html += 
 						"<tr>" + 
 							"<td><span class='file'>" + file_tmp + "</span></td>" + 
 							"<td class='size' data-sort='" + sTmp[1] + "'>" + bytesToSize( sTmp[1] ) + "</td>" + 
-							"<td class='date' data-sort='" + sTmp[2] + "'>" + timestamp + "</td>" + 
+							"<td class='date' data-sort='" + sTmp[2] + "'>" + timestamp + "</td>" + "<td style='text-align: center';>" + status + "</td>"
 						"</tr>\n";
 					currentView.push( { "name": sTmp[0], "path": currentViewPath, "type": "file", "size": sTmp[1], "date": sTmp[2] } );
 				}
