@@ -1271,7 +1271,7 @@
 					table_html += "<span id='parent_folder' class='file_folder'><a href=\"#\" class=\"folder_link\" id=\"" + parent_folders[FolderID] + "\"> [..]</a></span>\n";
 					table_html += "<div id='parent_folder_border'></div>";
 				}
-				table_html += "<table id='files' class='tablesorter" + showParentFolderClass + "'><thead><th>Name</th><th>Size</th><th>Modified</th></tr></thead><tbody>\n";
+				table_html += "<table id='files' class='tablesorter" + showParentFolderClass + "'><thead><th>Name</th><th>Size</th><th>Modified</th><th>Status</th></tr></thead><tbody>\n";
 
 				currentView = [];
 				var countFiles = 0;
@@ -1290,11 +1290,13 @@
 						var dirSize = getDirTreeSize( subdirs[c] );
 						subdirTotSizes += dirSize;
 						var timestamp = timestampToDate(sTmp[2]);
+						// STATUS VARIABLE FOR EACH FILE WOULD GO HERE
+						var status = "corrupted/not corrupted"
 						table_html += 
 							"<tr>" + 
 								"<td><span class='file_folder'><a href=\"#\" class=\"folder_link\" id=\"" + subdirs[c] + "\"> " + name + "</a></span></td>" + 
 								"<td class='size' data-sort='" + dirSize + "'>" + bytesToSize( dirSize ) + "</td>" + 
-								"<td class='date' data-sort='" + sTmp[2] + "'>" + timestamp + "</td>" + 
+								"<td class='date' data-sort='" + sTmp[2] + "'>" + timestamp + "</td>" + "</td><td>" + status +
 							"</tr>\n";
 						currentView.push( { "name": name, "path": currentViewPath, "type": "dir", "size": dirSize, "date": sTmp[2] } );
 					}
