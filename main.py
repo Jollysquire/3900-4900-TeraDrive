@@ -1,8 +1,17 @@
 import os
 import sys
 import datetime
+import argparse
+from pathlib import Path
+import logging
 from os.path import getsize
 from hex import CheckFile
+
+parser = argparse.ArgumentParser(description='Makes a HTML form a given path.\n')
+parser.add_argument('pathToDir', help='Path to directory')
+parser.add_argument('outputFile', help='Name of html file without the .html')
+
+
 
 # Constant Variables
 APP_NAME = "File Recovery"
@@ -128,8 +137,8 @@ def make_HTML(
     GrandTotalSize,
     LinkFiles,
 ):
-    templateFile = open("template.html", "r")
-    outputFile = open(title + ".html", "w")
+    templateFile = open((Path(__file__).parent / 'template.html'), 'r')
+    outputFile = open(f'{title}.html', 'w', encoding="utf-8")
     for line in templateFile:
         modifiedLine = line
         modifiedLine = modifiedLine.replace("[DIR DATA]", DirData)
@@ -145,6 +154,7 @@ def make_HTML(
         outputFile.write(modifiedLine)
     templateFile.close()
     outputFile.close()
+    logging.warning("Wrote output to: " + os.path.realpath(outputFile.name))
 
 
 def main():
