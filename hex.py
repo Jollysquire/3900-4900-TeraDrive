@@ -44,3 +44,4 @@ class CheckFile:
                         return "corrupted"
 
         f.close()
+

@@ -23,10 +23,7 @@ def DirToArray(ScanDir):
     global NumFiles
     global NumDirs
     global GrandTotalSize
-    # create an empty list to store the different status
-    corruptStatus = []
-    notCorruptStatus = []
-    noStatus = []
+    
     # assing a number identifier to each directory
     i = 1
     dirIDsDictionary = {}
@@ -63,30 +60,28 @@ def DirToArray(ScanDir):
 
         totalSize = 0
         for file in files:
-            if os.path.isfile(file):
+            #if os.path.isfile(file):
                 NumFiles = NumFiles + 1
                 fileSize = getsize(currentDir + "/" + file)
                 totalSize = totalSize + fileSize
                 GrandTotalSize = GrandTotalSize + fileSize
                 fileModifiedTime = datetime.datetime.fromtimestamp(
-                    os.path.getmtime(currentDir + "/" + file)
+                    #os.path.getmtime(currentDir + "/" + file)
+                    os.path.getmtime(os.path.join(currentDir, file))
                 )
                 fileModifiedTime = fileModifiedTime.strftime("%d/%m/%Y %H:%M:%S")
-                currentDirArray.append(
-                    file + "*" + str(fileSize) + "*" + fileModifiedTime
-                )  # append file info to currentDirArray
 
                 # Check the file if its corrupted or not
+                #file = os.path.join(currentDir, file)
                 checkFile = CheckFile()
-                getHex, getType = checkFile.get_hex(file)
+                getHex, getType = checkFile.get_hex(os.path.join(currentDir, file))
                 status = checkFile.check_data(getHex, getType)
-                if status == "corrupted":
-                    corruptStatus.append(file)
-                elif status == "notCorrupted":
-                    notCorruptStatus.append(file)
-                else:
-                    noStatus.append(file)
-                print(status)
+                status = str(status)
+                currentDirArray.append(
+                    file + "*" + str(fileSize) + "*" + fileModifiedTime + "*" + status
+                ) 
+
+                
 
         currentDirArray.append(totalSize)  # append total file size to currentDirArray
         # create the list of directory IDs correspondent to the subdirs present on the current directory

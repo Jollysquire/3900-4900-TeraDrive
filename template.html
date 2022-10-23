@@ -8004,10 +8004,11 @@
 					{
 						countDirs++;
 						var sTmp = dirs[ subdirs[c] ][0].split("*");
-						var name = sTmp[0].substring( sTmp[0].lastIndexOf("/") +1 );
+						var name = sTmp[0].substring( sTmp[0].lastIndexOf("\\") +1 );
 						var dirSize = getDirTreeSize( subdirs[c] );
 						subdirTotSizes += dirSize;
-						var timestamp = timestampToDate(sTmp[2]);
+						// var timestamp = timestampToDate(sTmp[2]);
+                        var timestamp = sTmp[2]
 						// STATUS VARIABLE FOR EACH FOLDER WOULD GO HERE (technically nothing)
 						var status = ""
 						table_html += 
@@ -8053,24 +8054,35 @@
 						}
 					}
 					
-					var timestamp = timestampToDate(sTmp[2]);
+					// var timestamp = timestampToDate(sTmp[2]);
+                    var timestamp = sTmp[2]
+                    var tempstatus = sTmp[3]
+        
 					// STATUS VARIABLE FOR EACH FILE WOULD GO HERE
 					// status = "<span class='greendot'></span>"
 					// status = "<span class='reddot'></span>"
-					// status = "<span class='greudot'></span>"
+					// status = "<span class='greydot'></span>"
 
 					// if function returns corrupted, use reddot class
 					// if function returns not corrupted, use greendot class
 					// if function returns None or not scanned, use greydot class
 
-					var status = "<span class='greydot'></span>"
+					// var status = "<span class='greydot'></span>"
+                    if (tempstatus == "corrupted") {
+                        status = "<span class='reddot'></span>" 
+                    } else if (tempstatus == "notCorrupted") {
+                        status = "<span class='greendot'></span>"
+                    } else {
+                        status = "<span class='greydot'></span>"
+                    }
+
 					table_html += 
 						"<tr>" + 
 							"<td><span class='file'>" + file_tmp + "</span></td>" + 
 							"<td class='size' data-sort='" + sTmp[1] + "'>" + bytesToSize( sTmp[1] ) + "</td>" + 
 							"<td class='date' data-sort='" + sTmp[2] + "'>" + timestamp + "</td>" + "<td style='text-align: center';>" + status + "</td>"
 						"</tr>\n";
-					currentView.push( { "name": sTmp[0], "path": currentViewPath, "type": "file", "size": sTmp[1], "date": sTmp[2] } );
+					currentView.push( { "name": sTmp[0], "path": currentViewPath, "type": "file", "size": sTmp[1], "date": sTmp[2], "status": sTmp[3] } );
 				}
 
                 table_html += "</tbody></table>\n";
@@ -8309,7 +8321,7 @@
             function getDirName(id) {
                 if (dirs.length <= id) return "";
                 var tmp = dirs[id][0].split("*");
-                var tmp2 = tmp[0].substring(tmp[0].lastIndexOf("/") + 1);
+                var tmp2 = tmp[0].substring(tmp[0].lastIndexOf("\\") + 1);
                 if (tmp2 === "") return tmp[0];
                 else return tmp2;
             }
