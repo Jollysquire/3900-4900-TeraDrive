@@ -1,3 +1,4 @@
+from ast import arg
 import os
 import sys
 import datetime
@@ -6,11 +7,6 @@ from pathlib import Path
 import logging
 from os.path import getsize
 from hex import CheckFile
-
-parser = argparse.ArgumentParser(description='Makes a HTML form a given path.\n')
-parser.add_argument('pathToDir', help='Path to directory')
-parser.add_argument('outputFile', help='Name of html file without the .html')
-
 
 
 # Constant Variables
@@ -153,29 +149,67 @@ def make_HTML(
 
 
 def main():
-    if len(sys.argv) < 3:  # check if required arguments are supplied
-        print("Missing arguments. This tool should be used as follows:")
-        print("    renameMe pathToIndex outputFileName")
+    arggparser = argparse.ArgumentParser()
+    arggparser.add_argument(
+        "-d",
+        "--dir",
+        help="The directory to be scanned.",
+        required=True,
+    )
+    arggparser.add_argument(
+        "-t",
+        "--title",
+        help="The title of the HTML file.",
+        required=True,
+    )
+    arggparser.add_argument(
+        "-l",
+        "--link",
+        help="The link to the directory to be scanned.",
+        required=True,
+    )
+    arggparser.add_argument(
+        "-v",
+        "--verbose",
+        help="Verbose output.",
+        action="store_true",
+    )
+   
+    
+    args = arggparser.parse_args()
+    pathToIndex = args.path
+    title = args.title
+    linkFiles = args.linkfiles
+    if os.path.exists(pathToIndex):  # check if the specified directory exists
+        DirToArray(pathToIndex)
+        make_HTML(
+            DirData,
+            APP_NAME,
+            GEN_DATE,
+            GEN_TIME,
+            title,
+            APP_LINK,
+            NumFiles,
+            NumDirs,
+            GrandTotalSize,
+            LinkFiles=str(linkFiles).lower(),
+        )
     else:
-        pathToIndex = str(sys.argv[1])
-        title = str(sys.argv[2])
-        if os.path.exists(pathToIndex):  # check if the specified directory exists
-            DirToArray(pathToIndex)
-            make_HTML(
-                DirData,
-                APP_NAME,
-                GEN_DATE,
-                GEN_TIME,
-                title,
-                APP_LINK,
-                NumFiles,
-                NumDirs,
-                GrandTotalSize,
-                LinkFiles="false",
-            )
-        else:
-            print("The specified directory doesn't exist")
+        print("The specified directory doesn't exist")
 
 
 if __name__ == "__main__":
     main()
+
+
+"""
+
+    logging.debug("Starting...")
+    logging.debug("Scanning directory: " + args.dir)
+    logging.debug("Title: " + args.title)
+    logging.debug("Link: " + args.link)
+
+    # get current date and time
+    GenDate = datetime.datetime.now().strftime("%d/%m/%Y")
+    GenTime = datetime.datetime.now().strftime("%H:%M:%S")
+"""
