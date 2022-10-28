@@ -48,7 +48,11 @@ The app will take in two arguments. The first one is the path to the directory t
     -o, --output    Name of the HTML output file (without .html)
 ```
     
+##Lisence
 
+Appname is lisenced under GPLv3.
+    
+The template is directly forked from Snap2HTML and is lisenced as freeware.
 
 
 
