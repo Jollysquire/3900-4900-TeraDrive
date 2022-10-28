@@ -1,7 +1,7 @@
 # <AppName>
 
 ## Description    
-AppName is a python script that allows the user to generate a HTML file by indexing a directory. The app works on both Windows and Linux or headless machines. Appname is a fork of [DiogenesList](https://github.com/ZapperDJ/DiogenesList) and [Snap2HTML](https://www.rlvision.com/snap2html/) fixes all of the bugs these programs have while making imporvments to the output HTML file.
+AppName is a python script that allows the user to generate a HTML file by indexing a directory. The app works on both Windows and Linux or headless machines.Appname is a fork of [DiogenesList](https://github.com/ZapperDJ/DiogenesList) and [Snap2HTML](https://www.rlvision.com/snap2html/).Appname fixes all of the bugs these programs have while making imporvments to the output HTML file.
 
 - Python 3.9+
 - Works on both Linux and Windows
@@ -18,7 +18,7 @@ First install PIP on Windows or Linux.
 
 
 ### Linux
-    ```
+  
     #Ubuntu
     $ apt install python-pip
     
@@ -30,24 +30,24 @@ First install PIP on Windows or Linux.
     
     #Installing Appname
     pip install Appname
-    ```
+    
 
 ### Windows 
-    PIP is installed by default [Python](https://www.python.org/downloads/windows/) on Windows. Make sure to add python to your $PATH.
-    ```
+PIP is installed by default [Python](https://www.python.org/downloads/windows/) on Windows. Make sure to add python to your $PATH.
+    
     pip install 'AppName'
-    ```
+    
 
 ## Using AppName
-    The app will take in two arguments. The first one is the path to the directory that you want to scan. The final argument is the output HTML file.
-    ```
+The app will take in two arguments. The first one is the path to the directory that you want to scan. The final argument is the output HTML file.
+    
     appname -p PathToDirectory -o output
     
     #Options
     -h, --help      Help message
     -p, --path      Path to directory being scanned
     -o, --output    Name of the HTML output file (without .html)
-    ```
+    
     
 ## License
 
