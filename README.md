@@ -1,13 +1,14 @@
 # <AppName> will be named later
-<AppName> is a user-friendly python script that allows users to generate an HTML file by pointing to a directory. The app works on both Windows and Linux. <AppName> is a fork of the [DiogenesList](https://github.com/ZapperDJ/DiogenesList) and [Snap2HTML](https://www.rlvision.com/snap2html/) that aims to fix bugs and improve the code in certain areas. In addition, <AppName> develop a function to identify the file status.
-
-
-## Requirements
+    
+##Description
+<AppName> is a python script that allows the user to generate a HTML file by indexing a directory. The app works on both Windows and Linux or headless machines. Appname is a fork of [DiogenesList](https://github.com/ZapperDJ/DiogenesList) and [Snap2HTML](https://www.rlvision.com/snap2html/) fixes all of the bugs these programs have while making imporvments to the output HTML file.
 
 - Python 3.9+
 - Works on both Linux and Windows
 - Faster then Snap2HTML
-- 
+- No GUI
+- Improved code
+- Outputs file status in HTML
 
 The script will output a html file thats similar to Snap2HTML
 
@@ -48,15 +49,8 @@ The app will take in two arguments. The first one is the path to the directory t
     -o, --output    Name of the HTML output file (without .html)
 ```
     
-##Lisence
+##License
 
 Appname is lisenced under GPLv3.
     
-The template is directly forked from Snap2HTML and is lisenced as freeware.
-
-
-
-
-
-
-
+The template is directly forked from Snap2HTML and is licensed as freeware.
