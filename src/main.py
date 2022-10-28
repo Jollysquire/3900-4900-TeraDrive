@@ -7,7 +7,7 @@ from pathlib import Path
 import logging
 from os.path import getsize
 from hex import CheckFile
-
+from tqdm import tqdm #this is for a progress bar
 
 # Constant Variables
 APP_NAME = "File Recovery"
@@ -48,6 +48,7 @@ def DirToArray(ScanDir):
 
     # traverse the directory tree
     for currentDir, dirs, files in os.walk(ScanDir):
+       
 
         currentDirId = dirIDsDictionary[currentDir]
         currentDirArray = []  # array to hold all current dir data
@@ -146,19 +147,19 @@ def make_HTML(
     templateFile.close()
     outputFile.close()
     logging.warning("Wrote output to: " + os.path.realpath(outputFile.name))
-
+      
 
 def main():
     arggparser = argparse.ArgumentParser()
     arggparser.add_argument(
-        "-d",
-        "--dir",
+        "-p",
+        "--path",
         help="The directory to be scanned.",
         required=True,
     )
     arggparser.add_argument(
-        "-t",
-        "--title",
+        "-o",
+        "--output",
         help="The title of the HTML file.",
         required=True,
     )
@@ -168,14 +169,6 @@ def main():
         help="The link to the directory to be scanned.",
         required=True,
     )
-    arggparser.add_argument(
-        "-v",
-        "--verbose",
-        help="Verbose output.",
-        action="store_true",
-    )
-   
-    
     args = arggparser.parse_args()
     pathToIndex = args.path
     title = args.title
@@ -198,9 +191,9 @@ def main():
         print("The specified directory doesn't exist")
 
 
+    
 if __name__ == "__main__":
     main()
-
 
 """
 
