@@ -7,6 +7,7 @@ from pathlib import Path
 import logging
 from os.path import getsize
 from hex import CheckFile
+import time
 from tqdm import tqdm #this is for a progress bar
 
 # Constant Variables
@@ -148,6 +149,9 @@ def make_HTML(
     outputFile.close()
     logging.warning("Wrote output to: " + os.path.realpath(outputFile.name))
       
+def progress_bar():
+    for i in tqdm(range(100)):
+        time.sleep(0.01)
 
 def main():
     arggparser = argparse.ArgumentParser()
@@ -163,16 +167,14 @@ def main():
         help="The title of the HTML file.",
         required=True,
     )
-    arggparser.add_argument(
-        "-l",
-        "--link",
-        help="The link to the directory to be scanned.",
-        required=True,
-    )
+    
+    progress_bar()
+
     args = arggparser.parse_args()
     pathToIndex = args.path
-    title = args.title
-    linkFiles = args.linkfiles
+    title = args.output
+    
+
     if os.path.exists(pathToIndex):  # check if the specified directory exists
         DirToArray(pathToIndex)
         make_HTML(
@@ -185,24 +187,15 @@ def main():
             NumFiles,
             NumDirs,
             GrandTotalSize,
-            LinkFiles=str(linkFiles).lower(),
-        )
+            LinkFiles="",
+            )
     else:
         print("The specified directory doesn't exist")
+
 
 
     
 if __name__ == "__main__":
     main()
 
-"""
 
-    logging.debug("Starting...")
-    logging.debug("Scanning directory: " + args.dir)
-    logging.debug("Title: " + args.title)
-    logging.debug("Link: " + args.link)
-
-    # get current date and time
-    GenDate = datetime.datetime.now().strftime("%d/%m/%Y")
-    GenTime = datetime.datetime.now().strftime("%H:%M:%S")
-"""
