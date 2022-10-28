@@ -16,8 +16,8 @@ The script will output a html file thats similar to Snap2HTML
 First install PIP on Windows or Linux. 
 
 
-###Linux
-```
+### Linux
+    ```
     #Ubuntu
     $ apt install python-pip
     
@@ -29,27 +29,27 @@ First install PIP on Windows or Linux.
     
     #Installing Appname
     pip install Appname
-```
+    ```
 
-###Windows 
-PIP is installed by default [Python](https://www.python.org/downloads/windows/) on Windows. Make sure to add python to your $PATH.
-```
+### Windows 
+    PIP is installed by default [Python](https://www.python.org/downloads/windows/) on Windows. Make sure to add python to your $PATH.
+    ```
     pip install 'AppName'
-```
+    ```
 
 ## Using AppName
-The app will take in two arguments. The first one is the path to the directory that you want to scan. The final argument is the output HTML file.
-```
+    The app will take in two arguments. The first one is the path to the directory that you want to scan. The final argument is the output HTML file.
+    ```
     appname -p PathToDirectory -o output
     
     #Options
     -h, --help      Help message
     -p, --path      Path to directory being scanned
     -o, --output    Name of the HTML output file (without .html)
-```
+    ```
     
-##License
+## License
 
-Appname is lisenced under GPLv3.
+    Appname is lisenced under GPLv3.
     
-The template is directly forked from Snap2HTML and is licensed as freeware.
+    The template is directly forked from Snap2HTML and is licensed as freeware.
