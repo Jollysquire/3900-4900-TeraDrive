@@ -16,7 +16,7 @@ The script will output a html file thats similar to Snap2HTML
 First install PIP on Windows or Linux. 
 
 
-Linux
+#Linux
 ```
     #Ubuntu
     $ apt install python-pip
@@ -31,7 +31,8 @@ Linux
     pip install Appname
 ```
 
-Windows
+#Windows
+    
 PIP is installed by default [Python](https://www.python.org/downloads/windows/) on Windows. Make sure to add python to your $PATH.
 ```
     pip install 'AppName'
