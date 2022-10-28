@@ -15,7 +15,7 @@ GEN_DATE = datetime.datetime.now().strftime("%d/%m/%Y")
 GEN_TIME = datetime.datetime.now().strftime("%H:%M")
 APP_LINK = "https://github.com/Jollysquire/3900-4900-TeraDrive"
 
-# global variable
+# global variables
 DirData = ""
 NumFiles = 0
 NumDirs = 0
