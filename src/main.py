@@ -25,6 +25,7 @@ GrandTotalSize = 0
 
 # functions definition
 def DirToArray(ScanDir):
+    """ Goes to all your directory tree and check the file if it is corrupted , not corrupted , or no status"""
     global DirData
     global NumFiles
     global NumDirs
@@ -130,6 +131,7 @@ def make_HTML(
     GrandTotalSize,
     LinkFiles,
 ):
+    """ generate the an html based on the template.html to produce your own """
     templateFile = open((Path(__file__).parent / 'template.html'), 'r')
     outputFile = open(f'{title}.html', 'w', encoding="utf-8")
     for line in templateFile:
@@ -154,6 +156,7 @@ def progress_bar():
         time.sleep(0.01)
 
 def main():
+    """ runs the program """
     arggparser = argparse.ArgumentParser()
     arggparser.add_argument(
         "-p",
