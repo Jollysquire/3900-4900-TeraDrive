@@ -51,6 +51,6 @@ First install PIP on Windows or Linux.
     
 ## License
 
-    Appname is lisenced under GPLv3.
+Appname is lisenced under GPLv3.
     
-    The template is directly forked from Snap2HTML and is licensed as freeware.
+The template is directly forked from Snap2HTML and is licensed as freeware.
