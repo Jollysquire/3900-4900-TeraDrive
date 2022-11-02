@@ -194,7 +194,7 @@ def main():
                     LinkFiles="",
                     )
             else:
-                print("One or both of the specified directories don't exist")
+                sg.popup_error("Error", "One or both of the specified directories don't exist")
 
     window.close()
 
