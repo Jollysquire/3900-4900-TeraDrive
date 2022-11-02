@@ -124,13 +124,14 @@ def make_HTML(
     GenDate,
     GenTime,
     outputPath,
+    title,
     AppLink,
     NumFiles,
     NumDirs,
     GrandTotalSize,
     LinkFiles,
 ):
-    title = ("test")
+
     templateFile = open((Path(__file__).parent / 'template.html'), 'r')
     outputFile = open(f'{os.path.join(outputPath, title)}.html', 'w', encoding="utf-8")
     for line in templateFile:
@@ -148,6 +149,7 @@ def make_HTML(
         outputFile.write(modifiedLine)
     templateFile.close()
     outputFile.close()
+    sg.popup("Completed!")
     logging.warning("Wrote output to: " + os.path.realpath(outputFile.name))
 
 def main():
@@ -159,6 +161,7 @@ def main():
     layout = [[sg.MenubarCustom(menu_def, tearoff=False)],
               [sg.T("Input Folder:", s=15, justification="r"), sg.I(key="-IN-"), sg.FolderBrowse()],
               [sg.T("Output Folder:", s=15, justification="r"), sg.I(key="-OUT-"), sg.FolderBrowse()],
+              [sg.T("Output HTML Name:", s=15, justification="r"), sg.I(key="-TIN-")],
               [sg.Exit(s=16, button_color="tomato"), sg.B("Start", s=16)]]
     
     window = sg.Window('Snap2Check', layout, use_custom_titlebar=True)
@@ -166,6 +169,7 @@ def main():
         event, values = window.read()
         pathToIndex = values['-IN-'] 
         outputPath = values['-OUT-']
+        title = values['-TIN-']
         if event in (sg.WINDOW_CLOSED, "Exit"):
             break
         if event == "About":
@@ -187,11 +191,12 @@ def main():
                     GEN_DATE,
                     GEN_TIME,
                     outputPath,
+                    title,
                     APP_LINK,
                     NumFiles,
                     NumDirs,
                     GrandTotalSize,
-                    LinkFiles="",
+                    LinkFiles='""',
                     )
             else:
                 sg.popup_error("Error", "One or both of the specified directories don't exist")
