@@ -8,7 +8,7 @@ import logging
 from os.path import getsize
 from hex import CheckFile
 import time
-from tqdm import tqdm #this is for a progress bar
+import PySimpleGUI as sg 
 
 # Constant Variables
 APP_NAME = "File Recovery"
@@ -123,15 +123,16 @@ def make_HTML(
     AppName,
     GenDate,
     GenTime,
-    title,
+    outputPath,
     AppLink,
     NumFiles,
     NumDirs,
     GrandTotalSize,
     LinkFiles,
 ):
+    title = ("test")
     templateFile = open((Path(__file__).parent / 'template.html'), 'r')
-    outputFile = open(f'{title}.html', 'w', encoding="utf-8")
+    outputFile = open(f'{os.path.join(outputPath, title)}.html', 'w', encoding="utf-8")
     for line in templateFile:
         modifiedLine = line
         modifiedLine = modifiedLine.replace("[DIR DATA]", DirData)
@@ -148,49 +149,54 @@ def make_HTML(
     templateFile.close()
     outputFile.close()
     logging.warning("Wrote output to: " + os.path.realpath(outputFile.name))
-      
-def progress_bar():
-    for i in tqdm(range(100)):
-        time.sleep(0.01)
 
 def main():
-    arggparser = argparse.ArgumentParser()
-    arggparser.add_argument(
-        "-p",
-        "--path",
-        help="The directory to be scanned.",
-        required=True,
-    )
-    arggparser.add_argument(
-        "-o",
-        "--output",
-        help="The title of the HTML file.",
-        required=True,
-    )
-    
-    progress_bar()
+    # ------ Menu Definition ------ #
+    menu_def = [['Toolbar', ['About', 'Help']]]
 
-    args = arggparser.parse_args()
-    pathToIndex = args.path
-    title = args.output
-    
 
-    if os.path.exists(pathToIndex):  # check if the specified directory exists
-        DirToArray(pathToIndex)
-        make_HTML(
-            DirData,
-            APP_NAME,
-            GEN_DATE,
-            GEN_TIME,
-            title,
-            APP_LINK,
-            NumFiles,
-            NumDirs,
-            GrandTotalSize,
-            LinkFiles="",
-            )
-    else:
-        print("The specified directory doesn't exist")
+    # ------ GUI Definition ------ #
+    layout = [[sg.MenubarCustom(menu_def, tearoff=False)],
+              [sg.T("Input Folder:", s=15, justification="r"), sg.I(key="-IN-"), sg.FolderBrowse()],
+              [sg.T("Output Folder:", s=15, justification="r"), sg.I(key="-OUT-"), sg.FolderBrowse()],
+              [sg.Exit(s=16, button_color="tomato"), sg.B("Start", s=16)]]
+    
+    window = sg.Window('Snap2Check', layout, use_custom_titlebar=True)
+    while True:
+        event, values = window.read()
+        pathToIndex = values['-IN-'] 
+        outputPath = values['-OUT-']
+        if event in (sg.WINDOW_CLOSED, "Exit"):
+            break
+        if event == "About":
+            window.disappear()
+            sg.popup('About Snap2Check', "Version 1.0", "Used to scan file integrity and" \
+            " return HTML with results", grab_anywhere=True)
+            window.reappear()
+        if event == "Help":
+            window.disappear()
+            sg.popup('How to use Snap2Check', "Select the directory of files you wish to verify" \
+            " and an output directory for the HTML file generated", grab_anywhere=True)
+            window.reappear()
+        if event == "Start":
+            if os.path.exists(pathToIndex) and os.path.exists(outputPath):  # check if the specified directory exists
+                DirToArray(pathToIndex)
+                make_HTML(
+                    DirData,
+                    APP_NAME,
+                    GEN_DATE,
+                    GEN_TIME,
+                    outputPath,
+                    APP_LINK,
+                    NumFiles,
+                    NumDirs,
+                    GrandTotalSize,
+                    LinkFiles="",
+                    )
+            else:
+                print("One or both of the specified directories don't exist")
+
+    window.close()
 
 
 
