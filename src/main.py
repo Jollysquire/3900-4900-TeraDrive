@@ -162,10 +162,11 @@ def main():
     layout = [[sg.MenubarCustom(menu_def, tearoff=False)],
               [sg.T("Input Folder:", s=15, justification="r"), sg.I(enable_events=True, key="-IN-"), sg.FolderBrowse()],
               [sg.T("Output Folder:", s=15, justification="r"), sg.I(key="-OUT-"), sg.FolderBrowse()],
-              [sg.T("Output HTML Name:", s=15, justification="r"), sg.I(f"{filenameDefault}", key="-TIN-")],
-              [sg.Exit(s=16, button_color="tomato"), sg.B("Start", s=16)]]
+              [sg.T("Output HTML:", s=15, justification="r"), sg.I(f"{filenameDefault}", key="-TIN-")],
+              [sg.Exit(s=10, button_color="tomato"), sg.Button("Start", s=12)]]
     
-    window = sg.Window('Snap2Check', layout, use_custom_titlebar=True)
+    window = sg.Window('Snap2Check', layout, use_custom_titlebar=True, titlebar_icon='./logo_big.png', titlebar_text_color = '#FFF8DC', titlebar_background_color='#000000')
+    
     while True:
         event, values = window.read()
         pathToIndex = values['-IN-'] 
@@ -210,6 +211,18 @@ def main():
 
     
 if __name__ == "__main__":
+    # ------ GUI Styles ------ #
+    """ 0d1321-1d2d44-3e5c76-748cab-f0ebd8 """
+    # text = '#F0EBD8'
+    # bg = '#1d2d44'
+    # sg.set_options(background_color=(bg),
+    #           text_element_background_color = (bg),
+    #           button_color=(text,'#0d1321'),
+    #           input_elements_background_color=(text),
+    #           input_text_color=('#000000'),
+    #           text_color=(text))
+    
+    sg.set_options(font="Inter")
     main()
 
 
