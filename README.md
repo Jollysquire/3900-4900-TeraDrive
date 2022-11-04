@@ -14,34 +14,15 @@ The script will output a html file thats similar to Snap2HTML
 
 
 ## Installation
-~~First install PIP on Windows or Linux. ~~
-##### Replace
+#### Replace
 
 
 ### Linux
-~~  
-    #Ubuntu
-    $ apt install python-pip
-    
-    #Fedora
-    $ dnf install python3-pip
-    
-    #Arch
-    $ pacman -S python-pip
-    
-    #Installing Appname
-    pip install Appname
-~~
-##### Replace
+#### Replace
     
 
 ### Windows 
-~~
-PIP is installed by default [Python](https://www.python.org/downloads/windows/) on Windows. Make sure to add python to your $PATH.
-    
-    pip install 'AppName'
-~~
-##### Replace
+#### Replace
 
 
 ## Using Snap2Check
