@@ -151,14 +151,13 @@ def main():
             NumFiles,
             NumDirs,
             GrandTotalSize,
-            LinkFiles,
-        )
+            LinkFiles='""',
+            )
         else:
-            print("The specified directory does not exist.")
-       
-        
+            print("The specified directory doesn't exist")
 
 
 
+    
 if __name__ == "__main__":
     main()
