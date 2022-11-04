@@ -1,26 +1,22 @@
-from ast import arg
+from pathlib import Path, PurePath
 import os
+from re import S
 import sys
 import datetime
-import argparse
-from pathlib import Path
-import logging
 from os.path import getsize
-from hex import CheckFile
-import time
-from tqdm import tqdm #this is for a progress bar
+import logging
 
-# Constant Variables
-APP_NAME = "File Recovery"
-GEN_DATE = datetime.datetime.now().strftime("%d/%m/%Y")
-GEN_TIME = datetime.datetime.now().strftime("%H:%M")
-APP_LINK = "https://github.com/Jollysquire/3900-4900-TeraDrive"
-
-# global variables
+# global variables definition
+AppName = "renameMe"
+GenDate = datetime.datetime.now().strftime("%d/%m/%Y")
+GenTime = datetime.datetime.now().strftime("%H:%M")
+AppLink = "https://github.com/Jollysquire/3900-4900-TeraDrive"
 DirData = ""
 NumFiles = 0
 NumDirs = 0
 GrandTotalSize = 0
+LinkFiles = "false"  # set to "true" to generate links to files
+
 
 
 # functions definition
@@ -29,7 +25,6 @@ def DirToArray(ScanDir):
     global NumFiles
     global NumDirs
     global GrandTotalSize
-    
     # assing a number identifier to each directory
     i = 1
     dirIDsDictionary = {}
@@ -49,9 +44,8 @@ def DirToArray(ScanDir):
 
     # traverse the directory tree
     for currentDir, dirs, files in os.walk(ScanDir):
-       
-
         currentDirId = dirIDsDictionary[currentDir]
+
         currentDirArray = []  # array to hold all current dir data
         currentDirModifiedTime = datetime.datetime.fromtimestamp(
             os.path.getmtime(currentDir)
@@ -60,36 +54,22 @@ def DirToArray(ScanDir):
         currentDirFixed = currentDir.replace(
             "\\", "\\\\"
         )  # replace / with \\ in the dir path (necessary for javascript functions to work properly
-
         currentDirArray.append(
             currentDirFixed + "*0*" + currentDirModifiedTime
         )  # append directory info to currentDirArray
-
         totalSize = 0
         for file in files:
-            #if os.path.isfile(file):
-                NumFiles = NumFiles + 1
-                fileSize = getsize(currentDir + "/" + file)
-                totalSize = totalSize + fileSize
-                GrandTotalSize = GrandTotalSize + fileSize
-                fileModifiedTime = datetime.datetime.fromtimestamp(
-                    #os.path.getmtime(currentDir + "/" + file)
-                    os.path.getmtime(os.path.join(currentDir, file))
-                )
-                fileModifiedTime = fileModifiedTime.strftime("%d/%m/%Y %H:%M:%S")
-
-                # Check the file if its corrupted or not
-                #file = os.path.join(currentDir, file)
-                checkFile = CheckFile()
-                getHex, getType = checkFile.get_hex(os.path.join(currentDir, file))
-                status = checkFile.check_data(getHex, getType)
-                status = str(status)
-                currentDirArray.append(
-                    file + "*" + str(fileSize) + "*" + fileModifiedTime + "*" + status
-                ) 
-
-                
-
+            NumFiles = NumFiles + 1
+            fileSize = getsize(currentDir + "/" + file)
+            totalSize = totalSize + fileSize
+            GrandTotalSize = GrandTotalSize + fileSize
+            fileModifiedTime = datetime.datetime.fromtimestamp(
+                os.path.getmtime(currentDir + "/" + file)
+            )
+            fileModifiedTime = fileModifiedTime.strftime("%d/%m/%Y %H:%M:%S")
+            currentDirArray.append(
+                file + "*" + str(fileSize) + "*" + fileModifiedTime
+            )  # append file info to currentDirArray
         currentDirArray.append(totalSize)  # append total file size to currentDirArray
         # create the list of directory IDs correspondent to the subdirs present on the current directory
         # this acts as a list of links to the subdirectories on the javascript code
@@ -103,6 +83,7 @@ def DirToArray(ScanDir):
         fullDirArr[
             currentDirId
         ] = currentDirArray  # store currentDirArray on the correspondent position of fullDIrArr
+
     list_data = []
     for d in range(len(fullDirArr)):
         list_data.append("dirs[" + str(d) + "] = [\n")
@@ -148,54 +129,36 @@ def make_HTML(
     templateFile.close()
     outputFile.close()
     logging.warning("Wrote output to: " + os.path.realpath(outputFile.name))
-      
-def progress_bar():
-    for i in tqdm(range(100)):
-        time.sleep(0.01)
+    return
+
 
 def main():
-    arggparser = argparse.ArgumentParser()
-    arggparser.add_argument(
-        "-p",
-        "--path",
-        help="The directory to be scanned.",
-        required=True,
-    )
-    arggparser.add_argument(
-        "-o",
-        "--output",
-        help="The title of the HTML file.",
-        required=True,
-    )
-    
-    progress_bar()
-
-    args = arggparser.parse_args()
-    pathToIndex = args.path
-    title = args.output
-    
-
-    if os.path.exists(pathToIndex):  # check if the specified directory exists
-        DirToArray(pathToIndex)
-        make_HTML(
+    if len(sys.argv) < 3:  # check if required arguments are supplied
+        print("Missing arguments. This tool should be used as follows:")
+        print("    renameMe pathToIndex outputFileName")
+    else:
+        pathToIndex = str(sys.argv[1])
+        title = str(sys.argv[2])
+        if os.path.exists(pathToIndex):  # check if the specified directory exists
+            DirToArray(pathToIndex)
+            make_HTML(
             DirData,
-            APP_NAME,
-            GEN_DATE,
-            GEN_TIME,
+            AppName,
+            GenDate,
+            GenTime,
             title,
-            APP_LINK,
+            AppLink,
             NumFiles,
             NumDirs,
             GrandTotalSize,
-            LinkFiles="",
-            )
-    else:
-        print("The specified directory doesn't exist")
+            LinkFiles,
+        )
+        else:
+            print("The specified directory does not exist.")
+       
+        
 
 
 
-    
 if __name__ == "__main__":
     main()
-
-
