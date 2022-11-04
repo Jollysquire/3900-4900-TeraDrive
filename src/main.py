@@ -1,7 +1,7 @@
 from ast import arg
 import os
 import sys
-import datetime
+from datetime import datetime as dt
 import argparse
 from pathlib import Path
 import logging
@@ -12,8 +12,8 @@ import PySimpleGUI as sg
 
 # Constant Variables
 APP_NAME = "File Recovery"
-GEN_DATE = datetime.datetime.now().strftime("%d/%m/%Y")
-GEN_TIME = datetime.datetime.now().strftime("%H:%M")
+GEN_DATE = dt.now().strftime("%d/%m/%Y")
+GEN_TIME = dt.now().strftime("%H:%M")
 APP_LINK = "https://github.com/Jollysquire/3900-4900-TeraDrive"
 
 # global variables
@@ -53,7 +53,7 @@ def DirToArray(ScanDir):
 
         currentDirId = dirIDsDictionary[currentDir]
         currentDirArray = []  # array to hold all current dir data
-        currentDirModifiedTime = datetime.datetime.fromtimestamp(
+        currentDirModifiedTime = dt.fromtimestamp(
             os.path.getmtime(currentDir)
         )
         currentDirModifiedTime = currentDirModifiedTime.strftime("%d/%m/%Y %H:%M:%S")
@@ -72,7 +72,7 @@ def DirToArray(ScanDir):
                 fileSize = getsize(currentDir + "/" + file)
                 totalSize = totalSize + fileSize
                 GrandTotalSize = GrandTotalSize + fileSize
-                fileModifiedTime = datetime.datetime.fromtimestamp(
+                fileModifiedTime = dt.fromtimestamp(
                     #os.path.getmtime(currentDir + "/" + file)
                     os.path.getmtime(os.path.join(currentDir, file))
                 )
@@ -158,10 +158,11 @@ def main():
 
 
     # ------ GUI Definition ------ #
+    filenameDefault = dt.now().strftime("%Y-%m-%d_scan")
     layout = [[sg.MenubarCustom(menu_def, tearoff=False)],
-              [sg.T("Input Folder:", s=15, justification="r"), sg.I(key="-IN-"), sg.FolderBrowse()],
+              [sg.T("Input Folder:", s=15, justification="r"), sg.I(enable_events=True, key="-IN-"), sg.FolderBrowse()],
               [sg.T("Output Folder:", s=15, justification="r"), sg.I(key="-OUT-"), sg.FolderBrowse()],
-              [sg.T("Output HTML Name:", s=15, justification="r"), sg.I("output", key="-TIN-")],
+              [sg.T("Output HTML Name:", s=15, justification="r"), sg.I(f"{filenameDefault}", key="-TIN-")],
               [sg.Exit(s=16, button_color="tomato"), sg.B("Start", s=16)]]
     
     window = sg.Window('Snap2Check', layout, use_custom_titlebar=True)
@@ -172,8 +173,10 @@ def main():
         title = values['-TIN-']
         if event in (sg.WINDOW_CLOSED, "Exit"):
             break
+        if event == '-IN-':
+            window['-TIN-'].update(f"{filenameDefault}_{str(values['-IN-']).split('/')[-1]}")
         if event == "About":
-            window.disappear()
+            window.disappear()  
             sg.popup('About Snap2Check', "Version 1.0", "Used to scan file integrity and" \
             " return HTML with results", grab_anywhere=True)
             window.reappear()
