@@ -187,7 +187,7 @@ def main():
             NumFiles,
             NumDirs,
             GrandTotalSize,
-            LinkFiles="",
+            LinkFiles='""',
             )
     else:
         print("The specified directory doesn't exist")
