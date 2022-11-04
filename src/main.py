@@ -161,7 +161,7 @@ def main():
     layout = [[sg.MenubarCustom(menu_def, tearoff=False)],
               [sg.T("Input Folder:", s=15, justification="r"), sg.I(key="-IN-"), sg.FolderBrowse()],
               [sg.T("Output Folder:", s=15, justification="r"), sg.I(key="-OUT-"), sg.FolderBrowse()],
-              [sg.T("Output HTML Name:", s=15, justification="r"), sg.I(key="-TIN-")],
+              [sg.T("Output HTML Name:", s=15, justification="r"), sg.I("output", key="-TIN-")],
               [sg.Exit(s=16, button_color="tomato"), sg.B("Start", s=16)]]
     
     window = sg.Window('Snap2Check', layout, use_custom_titlebar=True)
