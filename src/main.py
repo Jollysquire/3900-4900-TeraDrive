@@ -111,8 +111,10 @@ def make_HTML(
     GrandTotalSize,
     LinkFiles,
 ):
+    
     templateFile = open((Path(__file__).parent / 'template.html'), 'r')
     outputFile = open(f'{title}.html', 'w', encoding="utf-8")
+    
     for line in templateFile:
         modifiedLine = line
         modifiedLine = modifiedLine.replace("[DIR DATA]", DirData)
@@ -123,7 +125,7 @@ def make_HTML(
         modifiedLine = modifiedLine.replace("[APP LINK]", AppLink)
         modifiedLine = modifiedLine.replace("[NUM FILES]", str(NumFiles))
         modifiedLine = modifiedLine.replace("[NUM DIRS]", str(NumDirs))
-        modifiedLine = modifiedLine.replace("[TOT SIZE]", str(GrandTotalSize))
+        modifiedLine = modifiedLine.replace("[TOT_SIZE]", str(GrandTotalSize))
         modifiedLine = modifiedLine.replace("[LINK FILES]", LinkFiles)
         outputFile.write(modifiedLine)
     templateFile.close()
