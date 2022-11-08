@@ -177,7 +177,63 @@ def make_HTML(
     sg.popup("Completed!")
     logging.warning("Wrote output to: " + os.path.realpath(outputFile.name))
 
-
+def setPlaceholder(widget, placeholderText):
+    """
+    For wx/qt/web, enable the placeholder setting.
+    For tk, use alternative implementation.
+    Implementation note:
+        Normally I would check attributes with hasattr,
+        Even though it is SimpleGUIWeb, there are still attributes for Qt, so I have taken a workaround.
+    """
+    if getattr(widget, "WxTextCtrl", None): # SimpleGUIWx
+        textCtrl = widget.WxTextCtrl # type: wx.TextCtrl
+        textCtrl.SetHint(placeholderText)
+        return
+    if getattr(widget, "QT_QLineEdit", None): # SimpleGUIQt
+        lineEdit = widget.QT_QLineEdit # type: QWidgets.QLineEdit
+        lineEdit.setPlaceholderText(placeholderText)
+        return
+    if getattr(widget, "Widget", None) and hasattr(widget.Widget, "attributes"): # SimpleGUIWeb
+        textInput = widget.Widget # type: remi.gui.TextInput
+        textInput.attributes["placeholder"] = placeholderText
+        return
+    if getattr(widget, "TKEntry", None):
+        # NOTE: tk8.7 will support "-placeholder" option
+        #
+        # entry = widget.TKEntry
+        # entry.config(placeholder=placeholderText) # XXX: Not verified
+        # return entry.get
+        #
+        entry = widget.TKEntry
+        def resetCursor(event=None):
+            if entry.get() == placeholderText:
+                entry.after_idle(entry.icursor, 0)
+        def startInput(event=None):
+            if entry.get() == placeholderText:
+                entry.delete(0, "end")
+                entry.config(fg="black")
+            else:
+                entry.after_idle(showPlaceholder)
+        def showPlaceholder(event=None):
+            if entry.get() == placeholderText or not entry.get():
+                entry.delete(0, "end")
+                entry.insert(0, placeholderText)
+                entry.config(fg="gray50")
+                entry.after_idle(entry.icursor, 0)
+        entry.bind("<FocusIn>", resetCursor)
+        entry.bind("<FocusOut>", showPlaceholder)
+        entry.bind("<Button-1>", resetCursor)
+        entry.bind("<Key>", startInput)
+        showPlaceholder()
+        def get_value():
+           
+            text = entry.get()
+            return text if text != placeholderText else ""
+        widget.Get = get_value
+        return
+    print(widget)
+    import warnings
+    warnings.warn("Unknown GUI Platform, setPlaceholder was ignored.")
 def main():
     # ------ Menu Definition ------ #
     menu_def = [['Toolbar', ['About', 'Help']]]
@@ -191,8 +247,8 @@ def main():
               [sg.T("Output HTML:", s=15, justification="r"), sg.I(f"{filenameDefault}", key="-TIN-")],
               [sg.Exit(s=10, button_color="tomato"), sg.Button("Start", s=12)]]
     
-    window = sg.Window('Snap2Check', layout, use_custom_titlebar=True, titlebar_icon='./logo_big.png', titlebar_text_color = '#FFF8DC', titlebar_background_color='#000000')
-    
+    window = sg.Window('Snap2Check', layout, use_custom_titlebar=True, titlebar_icon='./logo_big.png', titlebar_text_color = '#FFF8DC', titlebar_background_color='#000000').Finalize()
+    setPlaceholder(window["-IN-"], placeholderText="file path")
     while True:
         event, values = window.read()
         pathToIndex = values['-IN-'] 
@@ -213,6 +269,8 @@ def main():
             " and an output directory for the HTML file generated", grab_anywhere=True)
             window.reappear()
         if event == "Start":
+            window['-IN-']("")
+            window['-OUT-']("")
             if os.path.exists(pathToIndex) and os.path.exists(outputPath):  # check if the specified directory exists
                 DirToArray(pathToIndex)
                 make_HTML(
