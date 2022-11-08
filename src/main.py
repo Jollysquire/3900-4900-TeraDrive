@@ -248,7 +248,8 @@ def main():
               [sg.Exit(s=10, button_color="tomato"), sg.Button("Start", s=12)]]
     
     window = sg.Window('Snap2Check', layout, use_custom_titlebar=True, titlebar_icon='./logo_big.png', titlebar_text_color = '#FFF8DC', titlebar_background_color='#000000').Finalize()
-    setPlaceholder(window["-IN-"], placeholderText="file path")
+    setPlaceholder(window["-IN-"], placeholderText="Complete File Path")
+    setPlaceholder(window["-IN-"], placeholderText="Destination File path")
     while True:
         event, values = window.read()
         pathToIndex = values['-IN-'] 
