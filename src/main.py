@@ -1,6 +1,8 @@
-from ast import arg
+from pathlib import Path, PurePath
 import os
+from re import S
 import sys
+
 from datetime import datetime as dt
 import argparse
 from pathlib import Path
@@ -16,11 +18,18 @@ GEN_DATE = dt.now().strftime("%d/%m/%Y")
 GEN_TIME = dt.now().strftime("%H:%M")
 APP_LINK = "https://github.com/Jollysquire/3900-4900-TeraDrive"
 
-# global variables
+
+# global variables definition
+AppName = "renameMe"
+GenDate = datetime.datetime.now().strftime("%d/%m/%Y")
+GenTime = datetime.datetime.now().strftime("%H:%M")
+AppLink = "https://github.com/Jollysquire/3900-4900-TeraDrive"
 DirData = ""
 NumFiles = 0
 NumDirs = 0
 GrandTotalSize = 0
+LinkFiles = "false"  # set to "true" to generate links to files
+
 
 
 # functions definition
@@ -29,7 +38,6 @@ def DirToArray(ScanDir):
     global NumFiles
     global NumDirs
     global GrandTotalSize
-    
     # assing a number identifier to each directory
     i = 1
     dirIDsDictionary = {}
@@ -49,9 +57,8 @@ def DirToArray(ScanDir):
 
     # traverse the directory tree
     for currentDir, dirs, files in os.walk(ScanDir):
-       
-
         currentDirId = dirIDsDictionary[currentDir]
+
         currentDirArray = []  # array to hold all current dir data
         currentDirModifiedTime = dt.fromtimestamp(
             os.path.getmtime(currentDir)
@@ -60,13 +67,12 @@ def DirToArray(ScanDir):
         currentDirFixed = currentDir.replace(
             "\\", "\\\\"
         )  # replace / with \\ in the dir path (necessary for javascript functions to work properly
-
         currentDirArray.append(
             currentDirFixed + "*0*" + currentDirModifiedTime
         )  # append directory info to currentDirArray
-
         totalSize = 0
         for file in files:
+
             #if os.path.isfile(file):
                 NumFiles = NumFiles + 1
                 fileSize = getsize(currentDir + "/" + file)
@@ -88,8 +94,6 @@ def DirToArray(ScanDir):
                     file + "*" + str(fileSize) + "*" + fileModifiedTime + "*" + status
                 ) 
 
-                
-
         currentDirArray.append(totalSize)  # append total file size to currentDirArray
         # create the list of directory IDs correspondent to the subdirs present on the current directory
         # this acts as a list of links to the subdirectories on the javascript code
@@ -103,6 +107,7 @@ def DirToArray(ScanDir):
         fullDirArr[
             currentDirId
         ] = currentDirArray  # store currentDirArray on the correspondent position of fullDIrArr
+
     list_data = []
     for d in range(len(fullDirArr)):
         list_data.append("dirs[" + str(d) + "] = [\n")
@@ -132,8 +137,10 @@ def make_HTML(
     LinkFiles,
 ):
 
+
     templateFile = open((Path(__file__).parent / 'template.html'), 'r')
     outputFile = open(f'{os.path.join(outputPath, title)}.html', 'w', encoding="utf-8")
+
     for line in templateFile:
         modifiedLine = line
         modifiedLine = modifiedLine.replace("[DIR DATA]", DirData)
@@ -144,13 +151,14 @@ def make_HTML(
         modifiedLine = modifiedLine.replace("[APP LINK]", AppLink)
         modifiedLine = modifiedLine.replace("[NUM FILES]", str(NumFiles))
         modifiedLine = modifiedLine.replace("[NUM DIRS]", str(NumDirs))
-        modifiedLine = modifiedLine.replace("[TOT SIZE]", str(GrandTotalSize))
+        modifiedLine = modifiedLine.replace("[TOT_SIZE]", str(GrandTotalSize))
         modifiedLine = modifiedLine.replace("[LINK FILES]", LinkFiles)
         outputFile.write(modifiedLine)
     templateFile.close()
     outputFile.close()
     sg.popup("Completed!")
     logging.warning("Wrote output to: " + os.path.realpath(outputFile.name))
+
 
 def main():
     # ------ Menu Definition ------ #
@@ -208,8 +216,6 @@ def main():
     window.close()
 
 
-
-    
 if __name__ == "__main__":
     # ------ GUI Styles ------ #
     """ 0d1321-1d2d44-3e5c76-748cab-f0ebd8 """
@@ -224,5 +230,3 @@ if __name__ == "__main__":
     
     sg.set_options(font="Inter")
     main()
-
-
