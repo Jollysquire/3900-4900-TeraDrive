@@ -1,12 +1,12 @@
-# <AppName>
+# Snap2Check
 
 ## Description    
-AppName is a python script that allows the user to generate a HTML file by indexing a directory. The app works on both Windows and Linux or headless machines.Appname is a fork of [DiogenesList](https://github.com/ZapperDJ/DiogenesList) and [Snap2HTML](https://www.rlvision.com/snap2html/).Appname fixes all of the bugs these programs have while making imporvments to the output HTML file.
+Snap2Check is a python program that allows the user to generate a HTML file by indexing a directory. The app works on Windows. Snap2Check is a fork of [DiogenesList](https://github.com/ZapperDJ/DiogenesList) and [Snap2HTML](https://www.rlvision.com/snap2html/). Snap2Check fixes all of the bugs these programs have while making imporvments to the output HTML file.
 
 - Python 3.9+
-- Works on both Linux and Windows
+- Works on Windows
 - Faster then Snap2HTML
-- No GUI
+- Simple GUI
 - Improved code
 - Outputs file status in HTML
 
@@ -14,40 +14,21 @@ The script will output a html file thats similar to Snap2HTML
 
 
 ## Installation
-First install PIP on Windows or Linux. 
+#### Replace
 
 
 ### Linux
-  
-    #Ubuntu
-    $ apt install python-pip
-    
-    #Fedora
-    $ dnf install python3-pip
-    
-    #Arch
-    $ pacman -S python-pip
-    
-    #Installing Appname
-    pip install Appname
+#### Replace
     
 
 ### Windows 
-PIP is installed by default [Python](https://www.python.org/downloads/windows/) on Windows. Make sure to add python to your $PATH.
-    
-    pip install 'AppName'
-    
+#### Replace
 
-## Using AppName
-The app will take in two arguments. The first one is the path to the directory that you want to scan. The final argument is the output HTML file.
+
+## Using Snap2Check
+The app will take in three arguments. The first one is the path to the directory that you want to scan, the second argument is the directoy output for HTML file. Finally you enter a name for the output HTML file
     
-    appname -p PathToDirectory -o output
-    
-    #Options
-    -h, --help      Help message
-    -p, --path      Path to directory being scanned
-    -o, --output    Name of the HTML output file (without .html)
-    
+ 
     
 ## License
 
