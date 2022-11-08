@@ -1,14 +1,9 @@
-from pathlib import Path, PurePath
 import os
-from re import S
-import sys
 from datetime import datetime as dt
-import argparse
 from pathlib import Path
 import logging
 from os.path import getsize
 import re
-import time
 import base64
 import PySimpleGUI as sg 
 import json
@@ -21,7 +16,7 @@ APP_LINK = "https://github.com/Jollysquire/3900-4900-TeraDrive"
 
 
 # global variables definition
-AppName = "renameMe"
+AppName = "Snap2Check"
 GenDate = dt.now().strftime("%d/%m/%Y")
 GenTime = dt.now().strftime("%H:%M")
 DirData = ""
