@@ -11,6 +11,7 @@ import re
 import time
 import base64
 import PySimpleGUI as sg 
+import json
 
 # Constant Variables
 APP_NAME = "File Recovery"
@@ -131,42 +132,8 @@ def get_hex(file):
 
 def check_data(hex, fileType):
     """check the hex value from the json if its corrupted"""
-    data = [
-    { ".jpeg": "FFD8" },
-    { ".jpg": "FFD8" },
-    { ".png": "89504E470D0A1A0A" },
-    { ".bmp": "424D" },
-    { ".gif": "474946383761" },
-    { ".tif": "49492A00" },
-    { ".tiff": "4D4D002A" },
-    { ".pdf": "25504446" }, 
-    { ".psd": "25504446" },  
-
-    { ".doc": "D0CF11E0A1B11AE1" },
-    { ".xls": "D0CF11E0A1B11AE1" },
-    { ".xlsx": "504B0304504B0506" },
-    { ".docx": "504B0304504B0506" },
-    { ".ppt": "D0CF11E0A1B11AE1" },
-    { ".pptx": "504B0304504B0506" },
-    { ".msi": "D0CF11E0A1B11AE1" },
-    { ".msg": "D0CF11E0A1B11AE1" },
-    
-    { ".avi": "52494646" },
-    { ".mp4": "66747970" },
-    { ".mov": "66747970" },
-    { ".WMV": "3026B2" },
-    { ".flv": "464C56" },
-   
-    { ".wav": "52494646" },
-    { ".mp3": "494433" },
-    { ".mid": "4D546864" },
-    { ".midi": "4D546864" },
-
-    { ".rar": "52617221A0700" },
-    { ".docx": "504B0304504B0506" },
-    { ".zip": "504B0304504B0506" }
-
-]
+    f = open("hex.json")
+    data = json.load(f)
 
     for types in data:
         for key, value in types.items():
