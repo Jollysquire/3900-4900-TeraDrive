@@ -2,7 +2,6 @@ from pathlib import Path, PurePath
 import os
 from re import S
 import sys
-
 from datetime import datetime as dt
 import argparse
 from pathlib import Path
@@ -21,8 +20,8 @@ APP_LINK = "https://github.com/Jollysquire/3900-4900-TeraDrive"
 
 # global variables definition
 AppName = "renameMe"
-GenDate = datetime.datetime.now().strftime("%d/%m/%Y")
-GenTime = datetime.datetime.now().strftime("%H:%M")
+GenDate = dt.now().strftime("%d/%m/%Y")
+GenTime = dt.now().strftime("%H:%M")
 AppLink = "https://github.com/Jollysquire/3900-4900-TeraDrive"
 DirData = ""
 NumFiles = 0
@@ -151,7 +150,7 @@ def make_HTML(
         modifiedLine = modifiedLine.replace("[APP LINK]", AppLink)
         modifiedLine = modifiedLine.replace("[NUM FILES]", str(NumFiles))
         modifiedLine = modifiedLine.replace("[NUM DIRS]", str(NumDirs))
-        modifiedLine = modifiedLine.replace("[TOT_SIZE]", str(GrandTotalSize))
+        modifiedLine = modifiedLine.replace("[TOT SIZE]", str(GrandTotalSize))
         modifiedLine = modifiedLine.replace("[LINK FILES]", LinkFiles)
         outputFile.write(modifiedLine)
     templateFile.close()
