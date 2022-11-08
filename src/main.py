@@ -7,8 +7,9 @@ import argparse
 from pathlib import Path
 import logging
 from os.path import getsize
-from hex import CheckFile
+import re
 import time
+import base64
 import PySimpleGUI as sg 
 
 # Constant Variables
@@ -22,7 +23,6 @@ APP_LINK = "https://github.com/Jollysquire/3900-4900-TeraDrive"
 AppName = "renameMe"
 GenDate = dt.now().strftime("%d/%m/%Y")
 GenTime = dt.now().strftime("%H:%M")
-AppLink = "https://github.com/Jollysquire/3900-4900-TeraDrive"
 DirData = ""
 NumFiles = 0
 NumDirs = 0
@@ -85,9 +85,9 @@ def DirToArray(ScanDir):
 
                 # Check the file if its corrupted or not
                 #file = os.path.join(currentDir, file)
-                checkFile = CheckFile()
-                getHex, getType = checkFile.get_hex(os.path.join(currentDir, file))
-                status = checkFile.check_data(getHex, getType)
+                
+                getHex, getType = get_hex(os.path.join(currentDir, file))
+                status = check_data(getHex, getType)
                 status = str(status)
                 currentDirArray.append(
                     file + "*" + str(fileSize) + "*" + fileModifiedTime + "*" + status
@@ -120,6 +120,63 @@ def DirToArray(ScanDir):
     DirData += "".join(list_data)
 
     return
+
+def get_hex(file):
+    """Get the hex value of the file"""
+    with open(file, "rb") as f:
+        hexdata = base64.b16encode(f.read(32)).decode("utf-8")
+        fileType = os.path.splitext(file)
+
+    return hexdata, fileType[1].lower()
+
+def check_data(hex, fileType):
+    """check the hex value from the json if its corrupted"""
+    data = [
+    { ".jpeg": "FFD8" },
+    { ".jpg": "FFD8" },
+    { ".png": "89504E470D0A1A0A" },
+    { ".bmp": "424D" },
+    { ".gif": "474946383761" },
+    { ".tif": "49492A00" },
+    { ".tiff": "4D4D002A" },
+    { ".pdf": "25504446" }, 
+    { ".psd": "25504446" },  
+
+    { ".doc": "D0CF11E0A1B11AE1" },
+    { ".xls": "D0CF11E0A1B11AE1" },
+    { ".xlsx": "504B0304504B0506" },
+    { ".docx": "504B0304504B0506" },
+    { ".ppt": "D0CF11E0A1B11AE1" },
+    { ".pptx": "504B0304504B0506" },
+    { ".msi": "D0CF11E0A1B11AE1" },
+    { ".msg": "D0CF11E0A1B11AE1" },
+    
+    { ".avi": "52494646" },
+    { ".mp4": "66747970" },
+    { ".mov": "66747970" },
+    { ".WMV": "3026B2" },
+    { ".flv": "464C56" },
+   
+    { ".wav": "52494646" },
+    { ".mp3": "494433" },
+    { ".mid": "4D546864" },
+    { ".midi": "4D546864" },
+
+    { ".rar": "52617221A0700" },
+    { ".docx": "504B0304504B0506" },
+    { ".zip": "504B0304504B0506" }
+
+]
+
+    for types in data:
+        for key, value in types.items():
+            if key == fileType:
+                if re.search(f"{value}.+", hex):
+                    hexCode = hex
+                    if hexCode == hex:
+                        return "notCorrupted"
+                else:
+                    return "corrupted"
 
 
 def make_HTML(
