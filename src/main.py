@@ -58,7 +58,8 @@ def DirToArray(ScanDir):
         currentDirModifiedTime = dt.fromtimestamp(
             os.path.getmtime(currentDir)
         )
-        currentDirModifiedTime = currentDirModifiedTime.strftime("%d/%m/%Y %H:%M:%S")
+        #currentDirModifiedTime = currentDirModifiedTime.strftime("%d/%m/%Y %H:%M:%S")
+        currentDirModifiedTime = currentDirModifiedTime.strftime("%m/%d/%Y %H:%M:%S")
         currentDirFixed = currentDir.replace(
             "\\", "\\\\"
         )  # replace / with \\ in the dir path (necessary for javascript functions to work properly
@@ -77,7 +78,9 @@ def DirToArray(ScanDir):
                     #os.path.getmtime(currentDir + "/" + file)
                     os.path.getmtime(os.path.join(currentDir, file))
                 )
-                fileModifiedTime = fileModifiedTime.strftime("%d/%m/%Y %H:%M:%S")
+                #fileModifiedTime = fileModifiedTime.strftime("%d/%m/%Y %H:%M:%S")
+                fileModifiedTime = fileModifiedTime.strftime("%m/%d/%Y %H:%M:%S")
+
 
                 # Check the file if its corrupted or not
                 #file = os.path.join(currentDir, file)

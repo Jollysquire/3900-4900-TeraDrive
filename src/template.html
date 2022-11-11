@@ -7864,8 +7864,8 @@
                             sizeDirs += SearchFilenames[index][1];
                             var subdir_id = parent_folders[SearchLocationsID[index]];
 
-                            //var timestamp = timestampToDate(SearchFilenames[index][2]);
-                            var timestamp = SearchFilenames[index][2]
+                            var timestamp = timestampToDate(SearchFilenames[index][2]);
+                            //var timestamp = SearchFilenames[index][2]
 
                             locationHtml = "";
                             if (showLocationColumn) {
@@ -7880,7 +7880,7 @@
                                 "<td><span class='file_folder'><a href=\"#\" class=\"folder_link\" id=\"" + SearchLocationsID[index] + "\"> " + SearchFilenames[index][3] + "</a></span></td>" +
                                 locationHtml +
                                 "<td class='size' data-sort='" + SearchFilenames[index][1] + "'>" + bytesToSize(SearchFilenames[index][1]) + "</td>" +
-                                "<td class='date' data-sort='" + SearchFilenames[index][2] + "'>" + timestamp + "</td>" + "<td>" + "</td>" +
+                                "<td class='date' data-sort='" + timesToUnix(SearchFilenames[index][2]) + "'>" + timestamp + "</td>" + "<td>" + "</td>" +
                                 "</tr>";
                             currentView.push({
                                 "name": SearchFilenames[index][3],
@@ -7931,14 +7931,14 @@
                             }
 
 
-                            //var timestamp = timestampToDate(SearchFilenames[index][2]);
-                            var timestamp = SearchFilenames[index][2]
+                            var timestamp = timestampToDate(SearchFilenames[index][2]);
+                            //var timestamp = SearchFilenames[index][2]
                             table_html +=
                                 "<tr>" +
                                 "<td><span class='file'>" + file_tmp + "</span></td>" +
                                 locationHtml +
                                 "<td class='size' data-sort='" + SearchFilenames[index][1] + "'>" + bytesToSize(SearchFilenames[index][1]) + "</td>" +
-                                "<td class='date' data-sort='" + SearchFilenames[index][2] + "'>" + timestamp + "</td>" + "<td>" + SearchFilenames[index][4] + "</td>" +
+                                "<td class='date' data-sort='" + timesToUnix(SearchFilenames[index][2]) + "'>" + timestamp + "</td>" + "<td>" + SearchFilenames[index][4] + "</td>" +
                                 "</tr>";
 
                             currentView.push({
@@ -8067,15 +8067,15 @@
                         var name = sTmp[0].substring(sTmp[0].lastIndexOf("\\") + 1);
                         var dirSize = getDirTreeSize(subdirs[c]);
                         subdirTotSizes += dirSize;
-                        // var timestamp = timestampToDate(sTmp[2]);
-                        var timestamp = sTmp[2]
+                        var timestamp = timestampToDate(sTmp[2]);
+                        //var timestamp = sTmp[2]
                             // STATUS VARIABLE FOR EACH FOLDER WOULD GO HERE (technically nothing)
                         var status = ""
                         table_html +=
                             "<tr>" +
                             "<td><span class='file_folder'><a href=\"#\" class=\"folder_link\" id=\"" + subdirs[c] + "\"> " + name + "</a></span></td>" +
                             "<td class='size' data-sort='" + dirSize + "'>" + bytesToSize(dirSize) + "</td>" +
-                            "<td class='date' data-sort='" + sTmp[2] + "'>" + timestamp + "</td>" + "</td><td>" + status +
+                            "<td class='date' data-sort='" + timesToUnix(sTmp[2]) + "'>" + timestamp + "</td>" + "</td><td>" + status +
                             "</tr>\n";
                         currentView.push({
                             "name": name,
@@ -8121,8 +8121,8 @@
                         }
                     }
 
-                    // var timestamp = timestampToDate(sTmp[2]);
-                    var timestamp = sTmp[2]
+                    var timestamp = timestampToDate(sTmp[2]);
+                    //var timestamp = sTmp[2]
                     var tempstatus = sTmp[3]
 
                     // STATUS VARIABLE FOR EACH FILE WOULD GO HERE
@@ -8147,7 +8147,7 @@
                         "<tr>" +
                         "<td><span class='file'>" + file_tmp + "</span></td>" +
                         "<td class='size' data-sort='" + sTmp[1] + "'>" + bytesToSize(sTmp[1]) + "</td>" +
-                        "<td class='date' data-sort='" + sTmp[2] + "'>" + timestamp + "</td>" + "<td style='text-align: center';>" + status + "</td>"
+                        "<td class='date' data-sort='" + timesToUnix(sTmp[2]) + "'>" + timestamp + "</td>" + "<td style='text-align: center';>" + status + "</td>"
                     "</tr>\n";
                     currentView.push({
                         "name": sTmp[0],
@@ -8472,12 +8472,23 @@
             function timestampToDate(timestamp) {
                 // Convert UNIX timestamp to local date
                 // If you don't like the date format, try something else, such as toLocaleDateString() manually formatting the date here
-                return new Date(timestamp * 1000).toLocaleString();
+                return new Date(timestamp).toLocaleString();
             }
 
             function timestampToIsoString(timestamp) {
                 // Convert UNIX timestamp to ISO string (for use in export view)
                 return new Date(timestamp * 1000).toISOString();
+            }
+
+            function timesToUnix(timestamp) {
+                // convert time to Unix (to sort)
+
+                const date = new Date(timestamp);
+
+                const timestampInMs = date.getTime();
+
+                const unixTimestamp = Math.floor(date.getTime() / 1000);
+                return unixTimestamp
             }
 
 
