@@ -191,7 +191,8 @@ def main():
               [sg.T("Output HTML:", s=15, justification="r"), sg.I(f"{filenameDefault}", key="-TIN-")],
               [sg.Exit(s=10, button_color="tomato"), sg.Button("Start", s=12)]]
     
-    window = sg.Window('Snap2Check', layout, use_custom_titlebar=True, titlebar_icon='./logo_big.png', titlebar_text_color = '#FFF8DC', titlebar_background_color='#000000')
+    window = sg.Window('Snap2Check', layout, use_custom_titlebar=True, titlebar_icon='./logo_big.png', 
+    titlebar_text_color = '#FFF8DC', titlebar_background_color='#000000')
     
     while True:
         event, values = window.read()
@@ -205,12 +206,12 @@ def main():
         if event == "About":
             window.disappear()  
             sg.popup('About Snap2Check', "Version 1.0", "Used to scan file integrity and" \
-            " return HTML with results", grab_anywhere=True)
+            " return HTML with results", title="About", grab_anywhere=True)
             window.reappear()
         if event == "Help":
             window.disappear()
             sg.popup('How to use Snap2Check', "Select the directory of files you wish to verify" \
-            " and an output directory for the HTML file generated", grab_anywhere=True)
+            " and an output directory for the HTML file generated", title="Help", grab_anywhere=True)
             window.reappear()
         if event == "Start":
             if os.path.exists(pathToIndex) and os.path.exists(outputPath):  # check if the specified directory exists
@@ -229,7 +230,7 @@ def main():
                     LinkFiles='""',
                     )
             else:
-                sg.popup_error("Error", "One or both of the specified directories don't exist")
+                sg.popup_error("One or both of the specified directories don't exist", title="Error")
 
     window.close()
 
