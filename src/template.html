@@ -7789,6 +7789,16 @@
                                 SearchFilenames[nFound][0] = SearchFilenames[nFound][0].toLowerCase();
                                 SearchFilenames[nFound][1] = Number(SearchFilenames[nFound][1]);
                                 SearchLocationsRaw[nFound] = getDirNameAndPath(c);
+                                //STATUS FOR SEARCHING FILES
+                                SearchFilenames[nFound][4] = dirs[c][c2].split("*")[3];
+                                if (SearchFilenames[nFound][4] == "corrupted") {
+                                    SearchFilenames[nFound][4] = "<span class='reddot'></span>"
+                                } else if (SearchFilenames[nFound][4] == "notCorrupted") {
+                                    SearchFilenames[nFound][4] = "<span class='greendot'></span>"
+                                } else {
+                                    SearchFilenames[nFound][4] = "<span class='greydot'></span>"
+                                }
+
                                 if (hide_root)
                                     SearchLocations[nFound] = SearchLocationsRaw[nFound].substring(sourceParent.length);
                                 else
@@ -7815,6 +7825,8 @@
                     var countDirs = 0;
                     var sizeFiles = 0;
                     var sizeDirs = 0;
+
+ 
 
                     function foundItem(index) {
                         var dir_tmp = getDirNameAndPath(SearchLocationsID[index]);
@@ -7846,7 +7858,7 @@
 
                         dir_tmp = dir_tmp.substring(sourceRoot.length);
                         if (dir_tmp != "") dir_tmp += "/";
-
+                        
                         if (SearchIsDir[index] === true) {
                             countDirs++;
                             sizeDirs += SearchFilenames[index][1];
@@ -7868,7 +7880,7 @@
                                 "<td><span class='file_folder'><a href=\"#\" class=\"folder_link\" id=\"" + SearchLocationsID[index] + "\"> " + SearchFilenames[index][3] + "</a></span></td>" +
                                 locationHtml +
                                 "<td class='size' data-sort='" + SearchFilenames[index][1] + "'>" + bytesToSize(SearchFilenames[index][1]) + "</td>" +
-                                "<td class='date' data-sort='" + SearchFilenames[index][2] + "'>" + timestamp + "</td>" + "<td>" + SearchFilenames[index][5] + "</td>" +
+                                "<td class='date' data-sort='" + SearchFilenames[index][2] + "'>" + timestamp + "</td>" + "<td>" + "</td>" +
                                 "</tr>";
                             currentView.push({
                                 "name": SearchFilenames[index][3],
@@ -7881,6 +7893,7 @@
                         {
                             sizeFiles += SearchFilenames[index][1];
                             countFiles++;
+
 
                             var file_tmp = SearchFilenames[index][3];
 
@@ -7925,7 +7938,7 @@
                                 "<td><span class='file'>" + file_tmp + "</span></td>" +
                                 locationHtml +
                                 "<td class='size' data-sort='" + SearchFilenames[index][1] + "'>" + bytesToSize(SearchFilenames[index][1]) + "</td>" +
-                                "<td class='date' data-sort='" + SearchFilenames[index][2] + "'>" + timestamp + "</td>" + "<td>" + SearchFilenames[index][5] + "</td>" +
+                                "<td class='date' data-sort='" + SearchFilenames[index][2] + "'>" + timestamp + "</td>" + "<td>" + SearchFilenames[index][4] + "</td>" +
                                 "</tr>";
 
                             currentView.push({
@@ -8069,7 +8082,8 @@
                             "path": currentViewPath,
                             "type": "dir",
                             "size": dirSize,
-                            "date": sTmp[2]
+                            "date": sTmp[2],
+                            "status": status
                         });
                     }
                 }
@@ -8141,7 +8155,7 @@
                         "type": "file",
                         "size": sTmp[1],
                         "date": sTmp[2],
-                        "status": sTmp[3]
+                        "status": status
                     });
                 }
 
