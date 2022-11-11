@@ -8224,7 +8224,7 @@
 
             // init treeview items
             var rootNode = $("#treeview").dynatree("getRoot").addChild({
-                title: getDirName(0).replace(/\//, "\\"),
+                title: getDirName(0).replace(/\//, "/"),
                 key: "0",
                 isFolder: true,
                 tooltip: bytesToSize(getDirTreeSize(0)),
