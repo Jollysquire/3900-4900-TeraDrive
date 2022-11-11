@@ -7852,7 +7852,8 @@
                             sizeDirs += SearchFilenames[index][1];
                             var subdir_id = parent_folders[SearchLocationsID[index]];
 
-                            var timestamp = timestampToDate(SearchFilenames[index][2]);
+                            //var timestamp = timestampToDate(SearchFilenames[index][2]);
+                            var timestamp = SearchFilenames[index][2]
 
                             locationHtml = "";
                             if (showLocationColumn) {
@@ -7867,7 +7868,7 @@
                                 "<td><span class='file_folder'><a href=\"#\" class=\"folder_link\" id=\"" + SearchLocationsID[index] + "\"> " + SearchFilenames[index][3] + "</a></span></td>" +
                                 locationHtml +
                                 "<td class='size' data-sort='" + SearchFilenames[index][1] + "'>" + bytesToSize(SearchFilenames[index][1]) + "</td>" +
-                                "<td class='date' data-sort='" + SearchFilenames[index][2] + "'>" + timestamp + "</td>" +
+                                "<td class='date' data-sort='" + SearchFilenames[index][2] + "'>" + timestamp + "</td>" + "<td>" + SearchFilenames[index][5] + "</td>" +
                                 "</tr>";
                             currentView.push({
                                 "name": SearchFilenames[index][3],
@@ -7917,13 +7918,14 @@
                             }
 
 
-                            var timestamp = timestampToDate(SearchFilenames[index][2]);
+                            //var timestamp = timestampToDate(SearchFilenames[index][2]);
+                            var timestamp = SearchFilenames[index][2]
                             table_html +=
                                 "<tr>" +
                                 "<td><span class='file'>" + file_tmp + "</span></td>" +
                                 locationHtml +
                                 "<td class='size' data-sort='" + SearchFilenames[index][1] + "'>" + bytesToSize(SearchFilenames[index][1]) + "</td>" +
-                                "<td class='date' data-sort='" + SearchFilenames[index][2] + "'>" + timestamp + "</td>" +
+                                "<td class='date' data-sort='" + SearchFilenames[index][2] + "'>" + timestamp + "</td>" + "<td>" + SearchFilenames[index][5] + "</td>" +
                                 "</tr>";
 
                             currentView.push({
