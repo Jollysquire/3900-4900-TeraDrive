@@ -177,33 +177,32 @@ def make_HTML(
         outputFile.write(modifiedLine)
     templateFile.close()
     outputFile.close()
-    sg.popup("Completed!")
-    logging.warning("Wrote output to: " + os.path.realpath(outputFile.name))
+    sg.popup(f"Completed! {title} created in {outputPath}", title="Completed!")
 
 
 def main():
     # ------ Menu Definition ------ #
-    menu_def = [['Toolbar', ['About', 'Help']]]
+    menu_def = [['&Toolbar', ['About', 'Help']]]
 
 
     # ------ GUI Definition ------ #
     filenameDefault = dt.now().strftime("%Y-%m-%d_scan")
-    layout = [[sg.MenubarCustom(menu_def, tearoff=False)],
+    layout = [[sg.Menu(menu_def, tearoff=False, pad=(2,200))],
               [sg.T("Input Folder:", s=15, justification="r"), sg.I(enable_events=True, key="-IN-"), sg.FolderBrowse()],
               [sg.T("Output Folder:", s=15, justification="r"), sg.I(key="-OUT-"), sg.FolderBrowse()],
               [sg.T("Output HTML:", s=15, justification="r"), sg.I(f"{filenameDefault}", key="-TIN-")],
               [sg.Exit(s=10, button_color="tomato"), sg.Button("Start", s=12)]]
     
-    window = sg.Window('Snap2Check', layout, use_custom_titlebar=True, titlebar_icon='./logo_big.png', 
-    titlebar_text_color = '#FFF8DC', titlebar_background_color='#000000')
+    window = sg.Window('Snap2Check', layout)
     
     while True:
         event, values = window.read()
+        if event in (sg.WINDOW_CLOSED, "Exit"):
+            break
+         # ------ Proces Choices ------ #
         pathToIndex = values['-IN-'] 
         outputPath = values['-OUT-']
         title = values['-TIN-']
-        if event in (sg.WINDOW_CLOSED, "Exit"):
-            break
         if event == '-IN-':
             window['-TIN-'].update(f"{filenameDefault}_{str(values['-IN-']).split('/')[-1]}")
         if event == "About":
@@ -240,7 +239,6 @@ def main():
 
 if __name__ == "__main__":
     # ------ GUI Styles ------ #
-    """ 0d1321-1d2d44-3e5c76-748cab-f0ebd8 """
     # text = '#F0EBD8'
     # bg = '#1d2d44'
     # sg.set_options(background_color=(bg),
